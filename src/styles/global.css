@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+    /* Copper Series (Base/Earthy) */
+    --color-copper-50: #fbf8ef;
+    --color-copper-100: #f3ead2;
+    --color-copper-200: #e6d4a1;
+    --color-copper-300: #d9ba70;
+    --color-copper-400: #d0a54f;
+    --color-copper-500: #c68a3a;
+    --color-copper-600: #b87333;
+    --color-copper-700: #92522b;
+    --color-copper-800: #774229;
+    --color-copper-900: #633824;
+    --color-copper-950: #381c10;
+
+    /* Tradewind Series (Magical/Teal) */
+    --color-tradewind-50: #f2fbfa;
+    --color-tradewind-100: #d3f4f0;
+    --color-tradewind-200: #a7e8e0;
+    --color-tradewind-300: #74d4cd;
+    --color-tradewind-400: #43b3ae;
+    --color-tradewind-500: #2d9f9b;
+    --color-tradewind-600: #227f7f;
+    --color-tradewind-700: #1f6566;
+    --color-tradewind-800: #1d5152;
+    --color-tradewind-900: #1c4545;
+    --color-tradewind-950: #0b2628;
+
+    /* Typography */
+    --font-serif: "Merriweather", serif;
+    /* Example serif, adjust as needed or use default serifs */
+    --font-sans: "Inter", sans-serif;
+    /* Example sans, adjust as needed */
+}
+
+@layer base {
+    body {
+        @apply bg-copper-50 text-copper-800 font-sans;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-serif text-copper-950;
+    }
+}

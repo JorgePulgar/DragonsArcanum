@@ -1,0 +1,47 @@
+---
+import { Tag } from '../atoms/Tag';
+import { StarRating } from '../atoms/StarRating';
+import OptimizedImage from '../atoms/OptimizedImage.astro';
+import { Button } from '../atoms/Button';
+
+interface Props {
+  title: string;
+  description: string;
+  coverImage: string;
+  rating: number;
+  category: string;
+  slug: string;
+  className?: string;
+}
+
+const { title, description, coverImage, rating, category, slug, className } = Astro.props;
+---
+
+<div class:list={["group relative w-full h-full min-h-[400px] rounded-xl overflow-hidden isolate border-2 border-copper-950 shadow-[4px_4px_0px_0px_rgba(56,28,16,0.3)]", className]}>
+  {/* Background Image */}
+  <div class="absolute inset-0 z-0 bg-copper-800">
+    <OptimizedImage src={coverImage} alt={title} className="w-full h-full opacity-90 transition-transform duration-700 group-hover:scale-105" />
+    <div class="absolute inset-0 bg-gradient-to-t from-copper-950/95 via-copper-950/50 to-transparent" />
+  </div>
+
+  <div class="relative z-10 h-full flex flex-col justify-end p-6 md:p-8 text-copper-50">
+    <div class="flex items-center gap-2 mb-3">
+        <Tag label={category} variant="accent" className="bg-tradewind-600 text-white border-2 border-copper-950" />
+        <StarRating rating={rating} className="text-copper-100" />
+    </div>
+    
+    <h2 class="text-3xl md:text-4xl font-serif font-bold mb-2 leading-tight text-white drop-shadow-md">
+      {title}
+    </h2>
+    
+    <p class="text-copper-100 line-clamp-2 mb-6 max-w-xl text-lg font-medium">
+      {description}
+    </p>
+
+    <Button variant="primary" className="w-fit">
+      Read Review
+    </Button>
+    
+    <a href={`/reviews/${category}/${slug}`} class="absolute inset-0 z-20" aria-label={`Read review of ${title}`}></a>
+  </div>
+</div>

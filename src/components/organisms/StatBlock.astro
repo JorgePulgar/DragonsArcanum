@@ -1,0 +1,154 @@
+---
+import FAQAccordion from '../molecules/FAQAccordion';
+
+const faqItems = [
+    {
+        question: "Should I buy expansion books (like Tasha’s or Xanathar’s) right away?",
+        answer: "Unless you have a specific build in mind, wait. While these \"expansion\" books offer incredible depth that I personally wouldn't want to play without today, they add layers of complexity that can be overwhelming for a first-timer. Master the core rules first; the expansions will still be there when you’re ready for more."
+    },
+    {
+        question: "Can I just use the free Basic Rules online?",
+        answer: "Absolutely. The free \"SRD\" (System Reference Document) is a great way to see if you like the game. However, the Player’s Handbook contains 3x more subclasses, spells, and character options. If you know you’re going to play more than one session, the PHB is a mandatory technical upgrade."
+    },
+    {
+        question: "Is one adventure module enough for a whole campaign?",
+        answer: "Yes. A single book like Lost Mine of Phandelver or Dragon Heist can provide several months of weekly gameplay. You don't need a shelf full of adventures; you just need one good story to get your group from level 1 to level 6."
+    }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<section class="max-w-4xl mx-auto my-16 font-sans text-copper-900 shadow-xl rounded-sm overflow-hidden">
+  <!-- Top Border (Copper-500) -->
+  <div class="h-2 bg-copper-500 w-full"></div>
+
+  <!-- Main Content Body (White) -->
+  <div class="bg-white p-6 md:p-8">
+    
+    <!-- Title -->
+    <h2 class="font-serif text-3xl md:text-4xl font-bold text-copper-950 mb-2">
+      Stop Buying Books You Won’t Read
+    </h2>
+    <div class="text-sm italic text-copper-700 mb-6">Unless you're a collector.</div>
+
+    <!-- Gradient Divider -->
+    <hr class="border-0 h-[2px] bg-gradient-to-r from-transparent via-copper-500 to-transparent mb-6 opacity-60" />
+
+    <!-- Intro Text -->
+    <div class="space-y-4 text-copper-800 leading-relaxed mb-8">
+      <p>
+        Dungeons & Dragons has a "content problem." It has too much content, WAY too much. 
+      </p>
+
+      <p>
+        With hundreds of supplements and settings, it’s easy to feel like you need a $500 library just to start. <strong>You don’t.</strong> From my perspective, 80% of D&D content is optional flavor. If you want to actually play—not just collect—here is a quick guide that I think will help you make a more informed decision.
+      </p>
+    </div>
+
+    <!-- Section: If You’re a Player -->
+    <div class="mb-8">
+        <h3 class="font-serif text-xl font-bold text-copper-950 border-b border-copper-200 pb-1 mb-4">If You’re a Player</h3>
+        
+        <div class="mb-4">
+             <h4 class="font-bold text-lg text-copper-900 mb-1">The Essential: Player’s Handbook (PHB)</h4>
+             <p class="text-copper-800 text-sm mb-2">The PHB is the only "must-own" book. It is your character’s DNA and the game’s engine. Owning this saves you from being the person constantly asking "Wait, what does my spell do?" at the table. You'll have enough to create and play characters for years.</p>
+        </div>
+
+        <ul class="space-y-2">
+            <li class="flex items-start gap-2">
+                <span class="font-bold text-copper-950 whitespace-nowrap">My Advice.</span>
+                <span class="text-copper-800">Don't buy a bestiary or a setting book yet. You’ll rarely use them as a player.</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="font-bold text-copper-950 whitespace-nowrap">The Choice.</span>
+                <span class="text-copper-800"><a href="/comparisons/phb-2014-vs-2024" class="text-tradewind-700 font-bold hover:underline">2014 vs. 2024 PHB: Which edition should you pick?</a></span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Section: If You’re a Dungeon Master -->
+    <div class="mb-8">
+        <h3 class="font-serif text-xl font-bold text-copper-950 border-b border-copper-200 pb-1 mb-4">If You’re a Dungeon Master (DM)</h3>
+
+        <div class="mb-4">
+             <h4 class="font-bold text-lg text-copper-900 mb-1">The Core Duo: PHB + Dungeon Master’s Guide (DMG)</h4>
+             <p class="text-copper-800 text-sm mb-2">To run a game, you need the PHB for rules and the DMG for tools. Think of the DMG as your tactical manual—a toolbox for building encounters and improvising when your players inevitably do something weird. From my personal experience, you won't use everything the DMG has to offer, but it's a great resource to have when you need it.</p>
+             <ul class="space-y-2 mt-2">
+                 <li class="flex items-start gap-2">
+                    <span class="font-bold text-copper-950 whitespace-nowrap">The Comparison.</span>
+                    <span class="text-copper-800"><a href="/comparisons/dmg-2014-vs-2024" class="text-tradewind-700 font-bold hover:underline">DMG 2014 vs. 2024: Which fits your style?</a></span>
+                </li>
+             </ul>
+        </div>
+
+        <div class="mb-4">
+             <h4 class="font-bold text-lg text-copper-900 mb-1">The Shortcut: Buy an Adventure, Not a Bestiary</h4>
+             <p class="text-copper-800 text-sm mb-2">For a new DM, a pre-written adventure is worth more than three extra rulebooks. It teaches you pacing and encounter design in real-time. It also works like an "IKEA manual" for DnD, I use it to make my own puzzle without the need of spending tons of hours in creating every little piece of it.</p>
+             <ul class="space-y-2 mt-2">
+                 <li class="flex items-start gap-2">
+                    <span class="font-bold text-copper-950 whitespace-nowrap">For the Classic Journey.</span>
+                    <span class="text-copper-800"><a href="/adventures/lost-mine-of-phandelver" class="text-tradewind-700 font-bold hover:underline">Lost Mine of Phandelver</a> (Exploration & Dungeons).</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="font-bold text-copper-950 whitespace-nowrap">For Urban Intrigue.</span>
+                    <span class="text-copper-800"><a href="/adventures/waterdeep-dragon-heist" class="text-tradewind-700 font-bold hover:underline">Waterdeep: Dragon Heist</a> (Social Hooks & Investigation).</span>
+                </li>
+             </ul>
+        </div>
+    </div>
+    
+     <!-- Section: Quick Decision Guide -->
+    <div class="mb-8">
+        <h3 class="font-serif text-xl font-bold text-copper-950 border-b border-copper-200 pb-1 mb-4">Quick Decision Guide</h3>
+        <ul class="space-y-2">
+            <li class="flex items-start gap-2">
+                <span class="font-bold text-copper-950 whitespace-nowrap">New Players.</span>
+                <span class="text-copper-800">Buy the <strong>PHB</strong>. Period.</span>
+            </li>
+             <li class="flex items-start gap-2">
+                <span class="font-bold text-copper-950 whitespace-nowrap">New DMs.</span>
+                <span class="text-copper-800">Get the <strong>PHB + DMG + One Adventure</strong>.</span>
+            </li>
+             <li class="flex items-start gap-2">
+                <span class="font-bold text-copper-950 whitespace-nowrap">The "Skip" List.</span>
+                <span class="text-copper-800">Bestiaries and Setting Books. These are great for lore, but they aren't essential for your first six months of play.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Quote Box / Recommendation -->
+    <div class="bg-[#f9f3e6] border-l-4 border-copper-500 p-4 my-8 rounded-r-md">
+      <h4 class="font-bold text-copper-950 mb-2 font-serif text-lg">Why I recommend this approach</h4>
+      <p class="italic text-copper-800 font-serif">
+        "There is too much D&D content and not everyone has infinite money. I prefer to help you buy the right books the first time—the ones that actually hit the table—instead of collecting expensive supplements that just sit on a shelf."
+      </p>
+    </div>
+
+    <!-- Section: FAQ (Legendary Actions) -->
+    <div class="mb-8">
+        <h3 class="font-serif text-xl font-bold text-copper-950 border-b border-copper-200 pb-1 mb-4">Legendary Actions (FAQ)</h3>
+        <div class="min-h-[200px]">
+             <FAQAccordion client:visible items={faqItems} />
+        </div>
+    </div>
+
+  </div>
+  
+  <!-- Bottom Border -->
+  <div class="h-2 bg-copper-500 w-full"></div>
+
+  <!-- JSON-LD Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</section>

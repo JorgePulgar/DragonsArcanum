@@ -1,0 +1,110 @@
+---
+interface ArticleSchema {
+  type: 'Article';
+  data: {
+    headline: string;
+    image?: string;
+    datePublished: string;
+    dateModified?: string;
+  };
+}
+
+interface ReviewSchema {
+  type: 'Review';
+  data: {
+    title: string;
+    itemReviewed: {
+      name: string;
+      image: string;
+    };
+    author: string;
+    reviewRating: number;
+    datePublished: string;
+  };
+}
+
+interface ProductSchema {
+  type: 'Product';
+  data: {
+    name: string;
+    description: string;
+    image: string;
+    sku?: string;
+    brand: string;
+    offers: {
+      price: number;
+      priceCurrency: string;
+    };
+  };
+}
+
+interface Props {
+  schema: ArticleSchema | ReviewSchema | ProductSchema | Array<ArticleSchema | ReviewSchema | ProductSchema>;
+}
+
+const { schema } = Astro.props;
+
+function generateSchema(s: any) {
+  if (Array.isArray(s)) return s.map(generateJSONLD);
+  return generateJSONLD(s);
+}
+
+function generateJSONLD(item: any) {
+  if (item.type === 'Review') {
+    return {
+      "@context": "https://schema.org",
+      "@type": "Review",
+      "name": item.data.title,
+      "itemReviewed": {
+        "@type": "Product",
+        "name": item.data.itemReviewed.name,
+        "image": item.data.itemReviewed.image
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": item.data.reviewRating,
+        "bestRating": "10",
+        "worstRating": "0"
+      },
+      "author": {
+        "@type": "Person",
+        "name": item.data.author
+      },
+      "datePublished": item.data.datePublished
+    };
+  }
+  
+  if (item.type === 'Product') {
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": item.data.name,
+      "description": item.data.description,
+      "image": item.data.image,
+      "brand": {
+        "@type": "Brand",
+        "name": item.data.brand
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": item.data.offers.price,
+        "priceCurrency": item.data.offers.priceCurrency,
+        "availability": "https://schema.org/InStock"
+      }
+    };
+  }
+
+  // Fallback Article
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": item.data.headline,
+    "image": [item.data.image],
+    "datePublished": item.data.datePublished,
+    "dateModified": item.data.dateModified
+  };
+}
+
+const schemaJSON = JSON.stringify(generateSchema(schema));
+---
+<script type="application/ld+json" set:html={schemaJSON}></script>

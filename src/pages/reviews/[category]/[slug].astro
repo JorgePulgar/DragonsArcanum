@@ -1,0 +1,153 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import Schema from '../../../components/utils/Schema.astro';
+import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
+import { Tag } from '../../../components/atoms/Tag';
+import { StarRating } from '../../../components/atoms/StarRating';
+
+export async function getStaticPaths() {
+  const reviews = await getCollection('reviews');
+  return reviews.map(entry => {
+    // Assuming ID is "category/slug.mdx" or similar. 
+    // But better to use data.category and derive slug from ID.
+    // glob loader IDs are relative paths from base.
+    const slug = entry.id.split('/').pop()?.replace(/\.(md|mdx)$/, '') || entry.id;
+    return {
+      params: { category: entry.data.category, slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, description, product, rating, relatedComparisons } = entry.data;
+
+// Prepare Schema
+const reviewSchema = {
+  type: 'Review',
+  data: {
+    title,
+    itemReviewed: {
+      name: product.name,
+      image: product.coverImage
+    },
+    author: "The Adventure Vault", // Static for now
+    reviewRating: rating,
+    datePublished: entry.data.publishDate.toISOString(),
+  }
+};
+
+const productSchema = {
+  type: 'Product',
+  data: {
+    name: product.name,
+    description: description,
+    image: product.coverImage,
+    brand: product.publisher,
+    offers: {
+      price: product.price,
+      priceCurrency: product.currency
+    }
+  }
+};
+---
+
+<Layout title={title} description={description} image={product.coverImage} article>
+  <Schema schema={[reviewSchema, productSchema]} />
+
+  <article class="max-w-4xl mx-auto">
+    {/* Header */}
+    <header class="mb-8">
+      <div class="flex items-center gap-2 mb-4">
+        <Tag label={entry.data.category} variant="accent" />
+        <span class="text-sm text-neutral-500">{entry.data.publishDate.toLocaleDateString()}</span>
+      </div>
+      
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-balance">{title}</h1>
+      
+      <div class="flex flex-wrap items-center gap-6 mb-6">
+        <div class="flex items-center gap-2">
+          <StarRating rating={rating} size={24} />
+          <span class="font-bold text-lg">{rating}/10</span>
+        </div>
+        <div>
+           <span class="font-semibold">{product.system}</span>
+        </div>
+        <div>
+           <span class="font-semibold text-green-600 dark:text-green-400">
+             {product.currency === 'USD' ? '$' : product.currency}{product.price}
+           </span>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden aspect-video relative shadow-lg">
+        <OptimizedImage src={product.coverImage} alt={product.name} className="w-full h-full" loading="eager" />
+      </div>
+    </header>
+
+    {/* Content Grid */}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      {/* Main Content */}
+      <div class="lg:col-span-8 prose prose-lg dark:prose-invert prose-neutral max-w-none">
+        <h2>Verdict</h2>
+        <p class="lead text-xl font-medium text-neutral-600 dark:text-neutral-300">
+          {entry.data.verdict}
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+          <div class="bg-green-50 dark:bg-green-900/10 p-6 rounded-2xl border border-green-100 dark:border-green-900/20">
+            <h3 class="font-bold text-green-800 dark:text-green-400 mb-3 flex items-center gap-2">Pros</h3>
+            <ul class="space-y-2">
+              {entry.data.pros.map(p => (
+                <li class="flex items-start gap-2 text-sm">
+                  <span class="text-green-600 font-bold">+</span> {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl border border-red-100 dark:border-red-900/20">
+            <h3 class="font-bold text-red-800 dark:text-red-400 mb-3 flex items-center gap-2">Cons</h3>
+            <ul class="space-y-2">
+              {entry.data.cons.map(c => (
+                <li class="flex items-start gap-2 text-sm">
+                  <span class="text-red-600 font-bold">-</span> {c}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <Content />
+      </div>
+
+      {/* Sidebar */}
+      <aside class="lg:col-span-4 space-y-8">
+        <div class="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 sticky top-24">
+          <h3 class="font-bold text-lg mb-4">Product Details</h3>
+          <ul class="space-y-4 text-sm">
+            <li class="flex justify-between border-b pb-2 border-neutral-200 dark:border-neutral-800">
+              <span class="text-neutral-500">Publisher</span>
+              <span class="font-medium text-right">{product.publisher}</span>
+            </li>
+            <li class="flex justify-between border-b pb-2 border-neutral-200 dark:border-neutral-800">
+              <span class="text-neutral-500">System</span>
+              <span class="font-medium text-right">{product.system}</span>
+            </li>
+            <li class="flex justify-between border-b pb-2 border-neutral-200 dark:border-neutral-800">
+              <span class="text-neutral-500">Levels</span>
+              <span class="font-medium text-right">{product.levels?.min}-{product.levels?.max}</span>
+            </li>
+          </ul>
+          
+          {product.affiliateLink && (
+            <a href={product.affiliateLink} target="_blank" rel="noopener noreferrer" class="mt-6 block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3 rounded-xl transition-colors">
+              Buy Now
+            </a>
+          )}
+        </div>
+      </aside>
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,197 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import BentoGrid from '../components/organisms/BentoGrid.astro';
+import BentoItem from '../components/organisms/BentoItem.astro';
+import FeaturedCard from '../components/molecules/FeaturedCard.astro';
+import ReviewCard from '../components/molecules/ReviewCard.astro';
+import BasicCard from '../components/molecules/BasicCard.astro';
+import StatBlock from '../components/organisms/StatBlock.astro';
+import { Button } from '../components/atoms/Button';
+
+// --- Data Fetching ---
+const allReviews = await getCollection('reviews');
+const sortedReviews = allReviews.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+// Helper to fill grid with mock data if not enough real posts
+const fillGrid = (posts: typeof sortedReviews, min: number) => {
+    let filled = [...posts];
+    while (filled.length < min && filled.length > 0) {
+        filled = [...filled, ...posts];
+    }
+    return filled.map((p, i) => ({
+        ...p,
+        id: `${p.id}-${i}`, // Unique ID for key
+        data: { ...p.data, title: `${p.data.title} ${i > 0 ? `(${i + 1})` : ''}` }
+    })).slice(0, 3); // Limit to 3 for single-line visualization
+};
+
+// 1. Comparisons Cluster
+const comparisons = fillGrid(sortedReviews, 3); 
+
+// 2. Critiques Cluster
+const critiques = fillGrid(sortedReviews, 3);
+
+// 3. News/Release Tracker (Mock Data)
+const rawNews = [
+    { title: "D&D 2026 Roadmap Revealed", type: "News", date: "2026-01-15" },
+    { title: "New DMG Errata", type: "Update", date: "2026-01-10" },
+    { title: "WotC Announces VTT Pricing", type: "Release", date: "2026-01-05" },
+];
+
+const newsItems = [...rawNews].slice(0, 3);
+---
+
+<Layout title="Dragon's Arcanum" description="The detailed archive for D&D book comparisons and reviews.">
+  
+  {/* 1. HERO SECTION */}
+  <section class="relative mb-20 py-24 md:py-32 lg:py-40 xl:py-48 px-4 overflow-hidden min-h-[400px] lg:min-h-[600px] flex items-center">
+    {/* Background Image with Overlay */}
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="/images/bg-hero.webp" 
+        alt="" 
+        class="w-full h-full object-cover object-top opacity-90" 
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent from-50% via-copper-50/80 via-80% to-copper-50"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto text-center relative z-10 w-full">
+      <h1 class="text-5xl md:text-7xl font-serif font-extrabold tracking-tighter mb-6 text-copper-950 [text-shadow:_0_0_30px_rgba(251,248,239,1),_0_2px_4px_rgba(56,28,16,0.3)]">
+        Choose your next <br/>
+        <span class="text-copper-500">D&D Book</span>
+      </h1>
+      <h2 class="text-xl md:text-2xl text-copper-800 mb-10 leading-relaxed font-sans max-w-2xl mx-auto [text-shadow:_0_0_20px_rgba(251,248,239,0.9),_0_1px_2px_rgba(56,28,16,0.2)]">
+        The Definitive Archive for Dungeons and Dragons Book Comparisons & Reviews.
+      </h2>
+    </div>
+  </section>
+
+  {/* 2. COMPARISONS CLUSTER (3x2 Grid) */}
+  <section class="mb-24 px-4 container mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+      <h3 class="text-3xl font-serif font-bold text-copper-950">Side-by-Side D&D Book Comparisons</h3>
+      <div class="h-1 flex-grow bg-copper-200 rounded-full"></div>
+    </div>
+
+    <BentoGrid>
+        {comparisons.map(post => (
+            <BentoItem>
+                <ReviewCard 
+                    title={post.data.title}
+                    coverImage={post.data.product.coverImage}
+                    rating={post.data.rating}
+                    category={post.data.category}
+                    slug={post.id.split('/').pop()?.replace(/\.mdx?$/, '') || ''}
+                />
+            </BentoItem>
+        ))}
+    </BentoGrid>
+    
+    <div class="mt-8 text-center">
+        <Button href="/comparisons" variant="primary" size="lg">
+            See all Book Comparisons <span class="ml-2">→</span>
+        </Button>
+    </div>
+  </section>
+
+  {/* 3. CRITIQUES CLUSTER (3x2 Grid) */}
+  {/* 3. CRITIQUES CLUSTER (3x2 Grid) */}
+  {/* Top Divider with SVG (Inverted) */}
+  <div class="w-full overflow-hidden leading-none rotate-180 -mb-1 relative z-10">
+    <img src="/dividers/section-divider.svg" alt="" class="w-full block" />
+  </div>
+  
+  <section class="bg-copper-300 py-16">
+    <div class="px-4 container mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+        <h3 class="text-3xl font-serif font-bold text-copper-950">In-Depth D&D Book Critiques</h3>
+        <div class="h-1 flex-grow bg-copper-100 rounded-full"></div>
+    </div>
+
+    <BentoGrid>
+         {critiques.map(post => (
+             <BentoItem>
+                 <ReviewCard 
+                    title={post.data.title}
+                    coverImage={post.data.product.coverImage}
+                    rating={post.data.rating}
+                    category={post.data.category}
+                    slug={post.id.split('/').pop()?.replace(/\.mdx?$/, '') || ''}
+                 />
+             </BentoItem>
+        ))}
+    </BentoGrid>
+
+    <div class="mt-8 text-center">
+        <Button href="/reviews" variant="primary" size="lg">
+            Read all Book Critiques <span class="ml-2">→</span>
+        </Button>
+    </div>
+    </div>
+  </section>
+
+  {/* Bottom Divider with SVG */}
+  <div class="w-full overflow-hidden leading-none mb-24 -mt-1 relative z-10">
+    <img src="/dividers/section-divider.svg" alt="" class="w-full block" />
+  </div>
+
+  {/* 4. RELEASE TRACKER CLUSTER (3x2 Grid) */}
+  <section class="mb-24 px-4">
+    <div class="container mx-auto">
+      <div class="flex items-center gap-4 mb-8">
+          <h3 class="text-3xl font-serif font-bold text-copper-950">D&D Release Tracker 2026</h3>
+          <div class="h-1 flex-grow bg-copper-200 rounded-full"></div>
+      </div>
+
+       <BentoGrid>
+          {newsItems.map((news) => (
+               <BentoItem>
+                   <BasicCard
+                      title={news.title}
+                      type={news.type}
+                      date={news.date}
+                   />
+               </BentoItem>
+          ))}
+       </BentoGrid>
+
+       <div class="mt-6 text-center">
+          <Button href="/news" variant="magical" size="lg">
+              View Release Calendar <span class="ml-2">→</span>
+          </Button>
+      </div>
+    </div>
+  </section>
+
+
+
+  {/* 5. STAT BLOCK GUDE */}
+  <StatBlock />
+
+  {/* 6. THE DRAGON'S STORY (About) */}
+  {/* Top Divider with SVG (Inverted) */}
+  <div class="w-full overflow-hidden leading-none scale-y-[-1] -mb-1 relative z-10">
+    <img src="/dividers/section-divider-2.svg" alt="" class="w-full block" />
+  </div>
+  <section class="bg-copper-200 py-20">
+     <div class="px-4 max-w-3xl mx-auto text-center">
+     <h3 class="text-3xl font-serif font-bold text-copper-950 mb-6">The DM Behind the Dragon's Arcanum</h3>
+     <div class="prose prose-lg prose-headings:text-copper-900 prose-p:text-copper-800 mx-auto text-left space-y-6">
+        <p>
+            Hey, I'm Jorge, the creator of <strong>Dragon's Arcanum</strong>. I’ve spent the last <strong>seven years</strong> living and breathing <strong>TTRPGs</strong>, with six of those spent almost exclusively behind the <strong>DM screen</strong>. After <strong>300+ hours of actual play</strong> and countless more consumed as "audio entertainment" (I'm obsessed with using roleplaying campaigns as podcasts), I realized that while there are plenty of opinions online, there wasn't a dedicated space for <strong>side-by-side DnD book comparisons</strong>. That’s why I built <strong>Dragon's Arcanum</strong>: to offer a real, human perspective on the overwhelming mountain of <strong>D&D 5e content</strong>. 
+        </p>
+        <p>
+            Like the <strong>Copper Dragons</strong> who inspired this site, I believe the best games are built on stories, humor, and those "remember when" moments your group will talk about for years. But a great story requires the right foundation. My approach to <strong>Dungeons and Dragons comparisons and reviews</strong> is intentionally personal and proudly biased. I don't just "test" mechanics; I read through <strong>adventure modules, rulebooks, setting guides, and bestiaries</strong> to find the good, the bad, and the stuff that needs a DM's touch.
+        </p>
+        <p>
+            I’m here to tell you exactly why a book might—or might not—work for your specific table. Whether you’re a "first-timer" or a "spreadsheet player," my goal is to help you find the <strong>DnD campaign</strong> that fits your table’s unique vibe. I’m not here to just summarize a book; I’m here to tell you how I’d master it, how I’d fix its flaws, and ultimately, how to ensure you and your party have the time of your lives.
+        </p>
+        <p>
+            So whether you're looking for the next <strong>D&D campaign</strong> to run, trying to decide between two <strong>rulebooks</strong>, or just want to know if a new <strong>D&D release</strong> is worth your time, you've come to the right place. Let's find your next adventure, have fun reading!
+        </p>
+     </div>
+     </div>
+  </section>
+
+</Layout>

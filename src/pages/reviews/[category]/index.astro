@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import BentoGrid from '../../../components/organisms/BentoGrid.astro';
+import BentoItem from '../../../components/organisms/BentoItem.astro';
+import FeaturedCard from '../../../components/molecules/FeaturedCard.astro';
+import ReviewCard from '../../../components/molecules/ReviewCard.astro';
+import { Tag } from '../../../components/atoms/Tag';
+
+export async function getStaticPaths() {
+  const categories = ['adventures', 'rulebooks', 'settings', 'supplements'];
+  return categories.map(category => ({
+    params: { category },
+    props: { category }
+  }));
+}
+
+const { category } = Astro.props;
+const reviews = await getCollection('reviews', ({ data }) => data.category === category);
+// Sort by date or importance
+const sortedReviews = reviews.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const featuredPost = sortedReviews.find(r => r.data.featured) || sortedReviews[0];
+const otherPosts = sortedReviews.filter(r => r.id !== featuredPost?.id);
+
+const title = `${category.charAt(0).toUpperCase() + category.slice(1)} Reviews`;
+const description = `The best D&D 5e ${category} reviewed and ranked.`;
+---
+
+<Layout title={title} description={description}>
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-12">
+       <h1 class="text-4xl md:text-5xl font-serif font-extrabold mb-4 tracking-tight text-copper-950">{title}</h1>
+       <p class="text-copper-700 text-lg max-w-2xl">{description}</p>
+    </div>
+
+    {!featuredPost ? (
+      <div class="p-12 text-center text-copper-500 bg-copper-100/50 rounded-2xl border-2 border-dashed border-copper-200">
+        No reviews found in this category yet.
+      </div>
+    ) : (
+      <BentoGrid>
+        {/* Hero Slot */}
+        <BentoItem colSpan={2} rowSpan={2}>
+          <FeaturedCard 
+            title={featuredPost.data.title}
+            description={featuredPost.data.verdict}
+            coverImage={featuredPost.data.product.coverImage}
+            rating={featuredPost.data.rating}
+            category={featuredPost.data.category}
+            slug={featuredPost.id.split('/').pop()?.replace(/\.mdx?$/, '') || ''}
+          />
+        </BentoItem>
+
+        {/* Rest of the grid */}
+        {otherPosts.map(review => (
+          <BentoItem colSpan={1} rowSpan={1}>
+            <ReviewCard 
+              title={review.data.title}
+              coverImage={review.data.product.coverImage}
+              rating={review.data.rating}
+              category={review.data.category}
+              slug={review.id.split('/').pop()?.replace(/\.mdx?$/, '') || ''}
+            />
+          </BentoItem>
+        ))}
+      </BentoGrid>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: any; // ImageMetadata or string
+  alt: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  loading?: "eager" | "lazy";
+}
+
+const { src, alt, width = 600, height = 400, className, loading = "lazy" } = Astro.props;
+---
+
+<div class:list={["overflow-hidden bg-neutral-100 dark:bg-neutral-900", className]}>
+  <Image 
+    src={src} 
+    alt={alt} 
+    width={width} 
+    height={height}
+    loading={loading}
+    class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+  />
+</div>

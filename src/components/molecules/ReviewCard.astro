@@ -1,0 +1,43 @@
+---
+import { Tag } from '../atoms/Tag';
+import { StarRating } from '../atoms/StarRating';
+import OptimizedImage from '../atoms/OptimizedImage.astro';
+
+interface Props {
+  title: string;
+  coverImage: string;
+  rating: number;
+  category: string;
+  slug: string;
+  price?: number;
+  className?: string;
+}
+
+const { title, coverImage, rating, category, slug, price, className } = Astro.props;
+---
+
+<a href={`/reviews/${category}/${slug}`} class:list={["group block relative flex flex-col h-full rounded-xl overflow-hidden bg-white border border-copper-200 transition-all hover:border-copper-400 hover:shadow-[4px_4px_0px_0px_rgba(56,28,16,0.1)]", className]}>
+  <div class="aspect-[4/3] w-full relative overflow-hidden border-b border-copper-100">
+     {/* Note: In real app, we need to resolve string path to ImageMetadata or allow public dir strings */}
+     <OptimizedImage src={coverImage} alt={title} className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105" />
+     <div class="absolute top-2 right-2">
+       <Tag label={category} variant="default" className="shadow-sm backdrop-blur-md bg-white/90 text-copper-800 border-copper-200" />
+     </div>
+  </div>
+  
+  <div class="p-4 flex flex-col flex-1 gap-2">
+    <h3 class="font-serif font-bold text-lg leading-tight text-copper-950 group-hover:text-tradewind-700 transition-colors line-clamp-2">
+      {title}
+    </h3>
+      {price && (
+          <span class="text-xs font-bold text-tradewind-700 bg-tradewind-50 px-2 py-1 rounded border border-tradewind-200">
+            ${price}
+          </span>
+      )}
+      <div class="flex items-center gap-2">
+        <StarRating rating={rating} size={14} className="text-copper-500" />
+        <span class="text-xs font-mono text-copper-500">{rating}/10</span>
+      </div>
+    </div>
+  </div>
+</a>

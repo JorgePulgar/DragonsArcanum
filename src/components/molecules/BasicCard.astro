@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  type: string;
+  date: string;
+  class?: string;
+}
+
+const { title, type, date, class: className } = Astro.props;
+---
+
+<div class:list={["bg-white border border-copper-200 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center", className]}>
+  <span class="text-xs font-bold tracking-wider text-tradewind-600 uppercase mb-2 block">{type}</span>
+  <h4 class="font-serif text-copper-950 font-bold text-xl">{title}</h4>
+  <p class="text-sm text-copper-500 mt-2">{date}</p>
+</div>

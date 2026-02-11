@@ -1,0 +1,40 @@
+---
+import { ChevronRight, Home } from 'lucide-react';
+
+const paths = Astro.url.pathname.split('/').filter(Boolean);
+const parts = [
+  { label: 'Home', href: '/', ariaLabel: 'Home' },
+  ...paths.map((part, i) => {
+    const href = `/${paths.slice(0, i + 1).join('/')}`;
+    // Simple text capitalization for label
+    const label = part.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return { label, href, ariaLabel: label };
+  })
+];
+---
+
+<nav aria-label="Breadcrumb" class="flex">
+  <ol role="list" class="flex items-center space-x-2">
+    {parts.map((part, index) => {
+      const isLast = index === parts.length - 1;
+      return (
+        <li class="flex items-center">
+          {index > 0 && <ChevronRight size={16} class="text-neutral-400 mx-1" />}
+          
+          <a
+            href={part.href}
+            class:list={[
+              "text-sm font-medium transition-colors hover:text-black dark:hover:text-white flex items-center gap-1",
+              isLast ? "text-neutral-900 dark:text-neutral-100 pointer-events-none" : "text-neutral-500 dark:text-neutral-400"
+            ]}
+            aria-current={isLast ? 'page' : undefined}
+          >
+            {index === 0 && <Home size={14} class="mr-1" />}
+            {index !== 0 && part.label}
+            {index === 0 && <span class="sr-only">Home</span>}
+          </a>
+        </li>
+      );
+    })}
+  </ol>
+</nav>
