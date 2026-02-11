@@ -1,43 +1,34 @@
-# Astro Starter Kit: Minimal
+# 🐉 Dragon's Arcanum
+### The Definitive Archive for D&D Book Comparisons & Reviews
 
-```sh
-npm create astro@latest -- --template minimal
-```
+**Dragon's Arcanum** is a high-performance TTRPG platform built to solve the "choice paralysis" in the Dungeons & Dragons community. It moves beyond traditional blogging by utilizing a **Technical Silo Architecture** to provide side-by-side data comparisons, in-depth critiques, and industry news.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## 🚀 The Development Experiment: Agentic Automation
+This project serves as a live laboratory for **Agentic Web Development**. 
+The entire platform is built using a custom autonomous workflow where a Lead Architect (Human) manages an Autonomous Agent (AI) through a strict protocol:
 
-Inside of your Astro project, you'll see the following folders and files:
+* **State-Machine Tasking**: Managed via a root-level `TASKS.md` that the agent reads, executes, and updates.
+* **Atomic Git Flow**: Local development occurs on a `dev` branch with atomic commits for every individual task, ensuring a clean and reversible version history.
+* **Real-time Monitoring**: Integrated with `ntfy.sh` to provide mobile push notifications for task completion, deployment readiness, or critical errors.
+* **Safety Guardrails**: Implemented a "No-Deletion" policy and a `CLEANUP_PENDING.md` log to ensure human-in-the-loop oversight for all destructive actions.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+---
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🛠 Tech Stack (2026 Standards)
+* **Framework**: [Astro 5.0](https://astro.build/) (Utilizing the Content Layer API for type-safe data loading).
+* **Styling**: [Tailwind CSS 4.0](https://tailwindcss.com/) with a custom **Copper & Tradewind** Design System.
+* **Interactivity**: [React 19](https://react.dev/) Islands for high-performance selective hydration.
+* **Data Integrity**: [Zod](https://zod.dev/) for strict runtime validation of all MDX content collections.
+* **Architecture**: Topic Cluster/Silo SEO architecture for maximum topical authority.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+---
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 🏛 Architecture & Design
+### Silo Structure
+The site is organized into four primary content silos to capture specific user intent:
+1.  **Adventures**: Modules, campaigns, and one-shots.
+2.  **Rulebooks**: Core rules and player expansions.
+3.  **Settings**: World guides and lore-heavy sourcebooks.
+4.  **Bestiaries**: Dedicated monster books and stat-block collections.
