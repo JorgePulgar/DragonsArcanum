@@ -24,8 +24,6 @@ pnpm-debug.log*
 .idea/
 
 # Ignore Proprietary Agent Rules
-.agent/rules/home.md
-.agent/rules/workflow.md
-.agent/rules/style.md # Optional: Keep if you want to show design skills
+.agent/
 TASKS.md
 CLEANUP_PENDING.md
