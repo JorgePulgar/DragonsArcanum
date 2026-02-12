@@ -3,15 +3,13 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import Schema from '../../../components/utils/Schema.astro';
 import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
+import TableOfContents from '../../../components/molecules/TableOfContents.astro';
 import { Tag } from '../../../components/atoms/Tag';
 import { StarRating } from '../../../components/atoms/StarRating';
 
 export async function getStaticPaths() {
   const reviews = await getCollection('reviews');
   return reviews.map(entry => {
-    // Assuming ID is "category/slug.mdx" or similar. 
-    // But better to use data.category and derive slug from ID.
-    // glob loader IDs are relative paths from base.
     const slug = entry.id.split('/').pop()?.replace(/\.(md|mdx)$/, '') || entry.id;
     return {
       params: { category: entry.data.category, slug },
@@ -21,8 +19,8 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
-const { title, description, product, rating, relatedComparisons } = entry.data;
+const { Content, headings } = await render(entry);
+const { title, description, product, rating, relatedComparisons, publishDate, verdict, pros, cons } = entry.data;
 
 // Prepare Schema
 const reviewSchema = {
@@ -33,9 +31,9 @@ const reviewSchema = {
       name: product.name,
       image: product.coverImage
     },
-    author: "The Adventure Vault", // Static for now
+    author: "The Adventure Vault",
     reviewRating: rating,
-    datePublished: entry.data.publishDate.toISOString(),
+    datePublished: publishDate.toISOString(),
   }
 };
 
@@ -57,97 +55,125 @@ const productSchema = {
 <Layout title={title} description={description} image={product.coverImage} article>
   <Schema schema={[reviewSchema, productSchema]} />
 
-  <article class="max-w-4xl mx-auto">
-    {/* Header */}
-    <header class="mb-8">
-      <div class="flex items-center gap-2 mb-4">
+  <article class="max-w-4xl mx-auto px-4 py-8">
+    {/* Header: H1 -> Featured Image -> Intro */}
+    <header class="mb-12 text-center max-w-3xl mx-auto">
+      <div class="flex items-center justify-center gap-2 mb-4">
         <Tag label={entry.data.category} variant="accent" />
-        <span class="text-sm text-neutral-500">{entry.data.publishDate.toLocaleDateString()}</span>
-      </div>
-      
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-balance">{title}</h1>
-      
-      <div class="flex flex-wrap items-center gap-6 mb-6">
-        <div class="flex items-center gap-2">
-          <StarRating rating={rating} size={24} />
-          <span class="font-bold text-lg">{rating}/10</span>
-        </div>
-        <div>
-           <span class="font-semibold">{product.system}</span>
-        </div>
-        <div>
-           <span class="font-semibold text-green-600 dark:text-green-400">
-             {product.currency === 'USD' ? '$' : product.currency}{product.price}
-           </span>
-        </div>
+        <span class="text-sm text-copper-600 block">{publishDate.toLocaleDateString()}</span>
       </div>
 
-      <div class="rounded-3xl overflow-hidden aspect-video relative shadow-lg">
-        <OptimizedImage src={product.coverImage} alt={product.name} className="w-full h-full" loading="eager" />
+      <h1 class="text-4xl md:text-6xl font-serif font-extrabold mb-6 text-copper-900 leading-tight text-balance">{title}</h1>
+      
+      <p class="text-xl text-copper-700 leading-relaxed mb-8 text-balance">
+        {description}
+      </p>
+
+      <div class="rounded-2xl overflow-hidden shadow-xl mb-8 border-4 border-copper-100">
+        <OptimizedImage src={product.coverImage} alt={product.name} className="w-full h-auto object-cover aspect-video" loading="eager" />
       </div>
+
+       {/* Quick Rating Block */}
+       <div class="flex justify-center items-center gap-4 bg-copper-50 py-3 px-6 rounded-full inline-flex mx-auto border border-copper-200">
+          <StarRating rating={rating} size={24} />
+          <span class="font-bold text-copper-900 text-lg">{rating}/10</span>
+       </div>
     </header>
 
-    {/* Content Grid */}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-      {/* Main Content */}
-      <div class="lg:col-span-8 prose prose-lg dark:prose-invert prose-neutral max-w-none">
-        <h2>Verdict</h2>
-        <p class="lead text-xl font-medium text-neutral-600 dark:text-neutral-300">
-          {entry.data.verdict}
-        </p>
+      {/* Sidebar (Moved to left or kept on right? Task implies standard layout, but let's keep sidebar structure logic)
+          Task says: H1 -> Image -> Intro -> ToC -> Content -> FAQ -> Recommended.
+          The sidebar with product details is useful. Let's keep it on the side (desktop) or bottom (mobile).
+      */}
+      
+      <div class="lg:col-span-8 prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-800 prose-a:text-tradewind-700 hover:prose-a:text-tradewind-900 max-w-none">
+        {/* Table of Contents */}
+        <TableOfContents headings={headings} />
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
-          <div class="bg-green-50 dark:bg-green-900/10 p-6 rounded-2xl border border-green-100 dark:border-green-900/20">
-            <h3 class="font-bold text-green-800 dark:text-green-400 mb-3 flex items-center gap-2">Pros</h3>
-            <ul class="space-y-2">
-              {entry.data.pros.map(p => (
-                <li class="flex items-start gap-2 text-sm">
-                  <span class="text-green-600 font-bold">+</span> {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl border border-red-100 dark:border-red-900/20">
-            <h3 class="font-bold text-red-800 dark:text-red-400 mb-3 flex items-center gap-2">Cons</h3>
-            <ul class="space-y-2">
-              {entry.data.cons.map(c => (
-                <li class="flex items-start gap-2 text-sm">
-                  <span class="text-red-600 font-bold">-</span> {c}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {/* Verdict / Pros & Cons - Part of the "Review" content flow */}
+        <div class="not-prose my-12 bg-white rounded-xl shadow-sm border border-copper-100 overflow-hidden">
+             <div class="p-6 bg-copper-50 border-b border-copper-100">
+                <h2 class="text-2xl font-serif font-bold text-copper-900 mb-2">The Verdict</h2>
+                <p class="text-lg text-copper-800 italic">{verdict}</p>
+             </div>
+             <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-copper-100">
+                <div class="p-6">
+                    <h3 class="font-bold text-tradewind-700 mb-4 flex items-center gap-2">
+                        <span class="text-xl">⊕</span> What Works
+                    </h3>
+                    <ul class="space-y-3">
+                        {pros.map(p => (
+                            <li class="flex items-start gap-3 text-sm text-copper-700">
+                                <span class="text-tradewind-500 mt-1">✓</span> {p}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-red-700 mb-4 flex items-center gap-2">
+                        <span class="text-xl">⊖</span> What Needs Work
+                    </h3>
+                    <ul class="space-y-3">
+                        {cons.map(c => (
+                            <li class="flex items-start gap-3 text-sm text-copper-700">
+                                <span class="text-red-400 mt-1">×</span> {c}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+             </div>
         </div>
 
+        {/* Main Content */}
         <Content />
+        
+        {/* FAQ Section (Placeholder for now, or if it exists in content) */}
+        {/* If frontmatter has FAQ, render here. For now, assuming it's part of Content or needs to be added later */}
+        
       </div>
 
       {/* Sidebar */}
       <aside class="lg:col-span-4 space-y-8">
-        <div class="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 sticky top-24">
-          <h3 class="font-bold text-lg mb-4">Product Details</h3>
-          <ul class="space-y-4 text-sm">
-            <li class="flex justify-between border-b pb-2 border-neutral-200 dark:border-neutral-800">
-              <span class="text-neutral-500">Publisher</span>
+        <div class="bg-white p-6 rounded-2xl border border-copper-200 shadow-sm sticky top-24">
+          <h3 class="font-serif font-bold text-xl mb-6 text-copper-900 border-b border-copper-100 pb-2">Product Details</h3>
+          <ul class="space-y-4 text-sm text-copper-700">
+            <li class="flex justify-between">
+              <span class="text-copper-500">Publisher</span>
               <span class="font-medium text-right">{product.publisher}</span>
             </li>
-            <li class="flex justify-between border-b pb-2 border-neutral-200 dark:border-neutral-800">
-              <span class="text-neutral-500">System</span>
+            <li class="flex justify-between">
+              <span class="text-copper-500">System</span>
               <span class="font-medium text-right">{product.system}</span>
             </li>
-            <li class="flex justify-between border-b pb-2 border-neutral-200 dark:border-neutral-800">
-              <span class="text-neutral-500">Levels</span>
-              <span class="font-medium text-right">{product.levels?.min}-{product.levels?.max}</span>
+             <li class="flex justify-between">
+              <span class="text-copper-500">Price</span>
+              <span class="font-medium text-right text-green-700 font-bold">{product.currency === 'USD' ? '$' : product.currency}{product.price}</span>
             </li>
+            {product.levels && (
+                 <li class="flex justify-between">
+                  <span class="text-copper-500">Levels</span>
+                  <span class="font-medium text-right">{product.levels.min}-{product.levels.max}</span>
+                </li>
+            )}
           </ul>
           
           {product.affiliateLink && (
-            <a href={product.affiliateLink} target="_blank" rel="noopener noreferrer" class="mt-6 block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3 rounded-xl transition-colors">
+            <a href={product.affiliateLink} target="_blank" rel="noopener noreferrer" class="mt-8 block w-full bg-tradewind-600 hover:bg-tradewind-700 text-white text-center font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
               Buy Now
             </a>
           )}
         </div>
       </aside>
     </div>
+    
+    {/* Recommended Posts (Placeholder) */}
+    <section class="mt-20 pt-10 border-t border-copper-200">
+        <h2 class="text-3xl font-serif font-bold text-copper-900 mb-8 text-center">You Might Also Like</h2>
+        {/* TODO: Implement Recommended Posts Logic */}
+        <div class="p-8 bg-copper-50 rounded-xl text-center text-copper-500 italic">
+            Recommended posts logic coming soon...
+        </div>
+    </section>
+
   </article>
 </Layout>

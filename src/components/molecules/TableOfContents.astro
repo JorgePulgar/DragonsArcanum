@@ -1,0 +1,32 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+
+// Filter out h1 and ensure we only have h2 and h3
+const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3);
+---
+
+{
+  toc.length > 0 && (
+    <nav class="toc my-8 p-4 bg-copper-100 rounded-lg border border-copper-200">
+      <h2 class="text-xl font-serif font-bold text-copper-900 mb-4">Table of Contents</h2>
+      <ul class="space-y-2">
+        {toc.map((heading) => (
+          <li class={`toc-item toc-h${heading.depth} ${heading.depth === 3 ? 'ml-4' : ''}`}>
+            <a
+              href={`#${heading.slug}`}
+              class="text-copper-700 hover:text-tradewind-600 transition-colors duration-200 block py-1"
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
