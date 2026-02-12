@@ -50,10 +50,19 @@ const comparisons = defineCollection({
         description: z.string(),
         publishDate: z.date(),
         category: z.enum(['adventures', 'rulebooks', 'settings', 'supplements']),
+        image: z.string().optional(),
 
         items: z.array(z.object({
             name: z.string(),
             reviewRef: reference('reviews').optional(),
+            // Comparison Criteria
+            ratings: z.object({
+                gameplay: z.number().min(0).max(10),
+                lore: z.number().min(0).max(10),
+                art: z.number().min(0).max(10),
+                value: z.number().min(0).max(10),
+                difficulty: z.number().min(0).max(10),
+            }).optional(),
             pros: z.array(z.string()).optional(),
             cons: z.array(z.string()).optional()
         })).min(2),

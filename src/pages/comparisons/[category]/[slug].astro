@@ -2,7 +2,9 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import Schema from '../../../components/utils/Schema.astro';
-import { ComparisonTable } from '../../../components/organisms/ComparisonTable';
+import ComparisonTable from '../../../components/organisms/ComparisonTable.astro';
+import TableOfContents from '../../../components/molecules/TableOfContents.astro';
+import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
 import { Tag } from '../../../components/atoms/Tag';
 
 export async function getStaticPaths() {
@@ -17,47 +19,64 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
-const { title, description } = entry.data;
+const { Content, headings } = await render(entry);
+const { title, description, items, publishDate, winner } = entry.data;
 
-// Transform data for ComparisonTable
-// In a real app, we would fetch referenced reviews here to populate the table dynamically.
-// For now, we use the items array directly from frontmatter.
-const tableProducts = entry.data.items.map((item, index) => ({
-  id: String(index),
-  name: item.name,
-  image: "/images/placeholder.jpg", // Needs resolution
-  isWinner: entry.data.winner === item.name,
+// Prepare Schema (ItemList or Review?)
+// Google recommends ItemList for summary pages, but if it's a comparison review, standard Review schema or Article is good.
+// Let's use Article + ItemList?
+const schema = {
+  type: 'Article',
   data: {
-    pros: item.pros,
-    cons: item.cons,
-    // Mocking other data as it's not in the Comparison frontmatter directly without lookup
-    rating: 8 + index, 
-    price: 49.99
+    headline: title,
+    description: description,
+    datePublished: publishDate.toISOString(),
+    author: {
+        name: "The Adventure Vault"
+    }
   }
-}));
-
-const tableRows = [
-  { label: 'Rating', key: 'rating', type: 'rating' },
-  { label: 'Price', key: 'price', type: 'price' },
-  { label: 'Pros', key: 'pros', type: 'list' },
-  { label: 'Cons', key: 'cons', type: 'list' },
-];
-
+};
 ---
 
 <Layout title={title} description={description} article>
-  <div class="max-w-6xl mx-auto">
-    <header class="text-center mb-12 max-w-3xl mx-auto">
-      <Tag label="Comparison" className="mb-4" />
-      <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight text-balance">{title}</h1>
-      <p class="text-xl text-neutral-600 dark:text-neutral-400">{description}</p>
+  <Schema schema={[schema]} />
+
+  <article class="max-w-4xl mx-auto px-4 py-8">
+     {/* Header: H1 -> Featured Image -> Intro */}
+    <header class="mb-12 text-center max-w-3xl mx-auto">
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <Tag label={entry.data.category} variant="accent" />
+        <span class="text-sm text-copper-600 block">{publishDate.toLocaleDateString()}</span>
+      </div>
+
+      <h1 class="text-4xl md:text-6xl font-serif font-extrabold mb-6 text-copper-900 leading-tight text-balance">{title}</h1>
+      
+      {entry.data.image && (
+        <div class="rounded-2xl overflow-hidden shadow-xl mb-8 border-4 border-copper-100">
+           <OptimizedImage src={entry.data.image} alt={title} className="w-full h-auto object-cover aspect-video" loading="eager" />
+        </div>
+      )}
+      
+      <p class="text-xl text-copper-700 leading-relaxed mb-8 text-balance">
+        {description}
+      </p>
     </header>
 
-    <ComparisonTable client:visible products={tableProducts} rows={tableRows} />
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-12 prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-800 max-w-none">
+            {/* Table of Contents */}
+            <TableOfContents headings={headings} />
 
-    <div class="prose prose-lg dark:prose-invert prose-neutral max-w-3xl mx-auto mt-12">
-      <Content />
+            {/* Comparison Table */}
+            <h2 class="text-3xl font-serif font-bold text-copper-900 mb-6">The Comparison</h2>
+            <ComparisonTable items={items} />
+
+            {/* Content */}
+            <Content />
+
+             {/* FAQ (Placeholder) */}
+             {/* Recommended (Placeholder) */}
+        </div>
     </div>
-  </div>
+  </article>
 </Layout>

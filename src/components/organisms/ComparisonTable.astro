@@ -1,0 +1,76 @@
+---
+import { StarRating } from '../atoms/StarRating';
+
+interface Props {
+  items: Array<{
+    name: string;
+    ratings?: {
+        gameplay: number;
+        lore: number;
+        art: number;
+        value: number;
+        difficulty: number;
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+
+const criteria = [
+  { key: 'gameplay', label: 'Gameplay' },
+  { key: 'lore', label: 'Lore' },
+  { key: 'art', label: 'Art' },
+  { key: 'value', label: 'Value' },
+  { key: 'difficulty', label: 'Difficulty' },
+] as const;
+---
+
+<div class="overflow-x-auto my-8 rounded-xl shadow-sm border border-copper-200 bg-white">
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr>
+        <th class="p-4 border-b-2 border-copper-100 bg-copper-50 text-copper-900 font-serif font-bold text-lg min-w-[150px]">
+          VS
+        </th>
+        {items.map((item) => (
+          <th class="p-4 border-b-2 border-copper-100 bg-copper-50 text-center font-serif font-bold text-copper-900 min-w-[150px]">
+            {item.name}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {criteria.map((criterion) => (
+        <tr class="hover:bg-copper-50/50 transition-colors">
+          <td class="p-4 border-b border-copper-100 font-medium text-copper-800">
+            {criterion.label}
+          </td>
+          {items.map((item) => (
+            <td class="p-4 border-b border-copper-100 text-center">
+              {item.ratings && (
+                <div class="flex justify-center flex-col items-center gap-1">
+                   {/* Difficulty logic: maybe text for difficulty? OR just stars. Task says "Star-Rating Comparison Table". */}
+                   <StarRating rating={item.ratings[criterion.key]} size={16} />
+                   <span class="text-xs text-copper-500 font-mono">{item.ratings[criterion.key]}/10</span>
+                </div>
+              ) || <span class="text-copper-400">-</span>}
+            </td>
+          ))}
+        </tr>
+      ))}
+       {/* Totals Row? Optional but good for comparison */}
+       <tr class="bg-tradewind-50 font-bold">
+            <td class="p-4 text-tradewind-900">Total Score</td>
+            {items.map(item => {
+                const total = item.ratings ? Object.values(item.ratings).reduce((a, b) => a + b, 0) : 0;
+                const average = item.ratings ? (total / 5).toFixed(1) : '-';
+                return (
+                    <td class="p-4 text-center text-tradewind-700 text-lg">
+                        {average}
+                    </td>
+                )
+            })}
+       </tr>
+    </tbody>
+  </table>
+</div>
