@@ -1,11 +1,15 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
+import Schema from '../../../components/utils/Schema.astro';
+import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
+import TableOfContents from '../../../components/molecules/TableOfContents.astro';
 import { Tag } from '../../../components/atoms/Tag';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
   return news.map(entry => {
+    // Check if ID contains slash (e.g., 'updates/welcome.md')
     const slug = entry.id.split('/').pop()?.replace(/\.(md|mdx)$/, '') || entry.id;
     return {
       params: { category: entry.data.category, slug },
@@ -15,21 +19,76 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
-const { title, excerpt } = entry.data;
+const { Content, headings } = await render(entry);
+const { title, excerpt, publishDate, image, sourceUrl } = entry.data;
+
+// NewsArticle Schema
+const schema = {
+  type: 'NewsArticle',
+  data: {
+    headline: title,
+    description: excerpt,
+    datePublished: publishDate.toISOString(),
+    image: image,
+    author: {
+        name: "The Adventure Vault"
+    }
+  }
+};
 ---
 
-<Layout title={title} description={excerpt} article>
-  <article class="max-w-3xl mx-auto">
-    <header class="mb-8">
-      <Tag label={entry.data.category} className="mb-4" />
-      <h1 class="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
-      <p class="text-xl text-neutral-600 dark:text-neutral-400 border-l-4 border-blue-600 pl-4">
+<Layout title={title} description={excerpt} image={image} article>
+  <Schema schema={[schema]} />
+
+  <article class="max-w-3xl mx-auto px-4 py-8">
+     {/* Header: H1 -> Featured Image -> Intro */}
+    <header class="mb-10">
+      <div class="flex items-center gap-3 mb-4 text-sm text-copper-600">
+        <Tag label={entry.data.category} variant="outline" />
+        <time datetime={publishDate.toISOString()}>{publishDate.toLocaleDateString()}</time>
+      </div>
+
+      <h1 class="text-3xl md:text-5xl font-serif font-bold mb-6 text-copper-900 leading-tight text-balance">{title}</h1>
+      
+      {image && (
+        <div class="rounded-xl overflow-hidden shadow-lg mb-8 border border-copper-100">
+           <OptimizedImage src={image} alt={title} className="w-full h-auto object-cover aspect-video" loading="eager" />
+        </div>
+      )}
+
+      {/* Intro / Excerpt */}
+      <p class="text-xl text-copper-800 leading-relaxed mb-6 font-medium border-l-4 border-tradewind-500 pl-4 bg-tradewind-50/50 py-2 rounded-r-lg">
         {excerpt}
       </p>
+
+      {sourceUrl && (
+        <div class="mb-8">
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-tradewind-600 hover:text-tradewind-800 flex items-center gap-1 transition-colors">
+                Read Original Source <span>→</span>
+            </a>
+        </div>
+      )}
     </header>
-    <div class="prose prose-lg dark:prose-invert prose-neutral">
-      <Content />
+
+    <div class="prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-800 prose-a:text-tradewind-700 hover:prose-a:text-tradewind-900 max-w-none">
+       {/* Table of Contents */}
+       <TableOfContents headings={headings} />
+
+       <Content />
     </div>
+
+    {/* Related News (Placeholder logic) - "Related News" implies querying other news items 
+        Ideally we'd pass related posts, but for now a placeholder structure matches the request.
+    */}
+    <section class="mt-16 pt-8 border-t border-copper-200">
+         <h3 class="text-2xl font-serif font-bold text-copper-900 mb-6">Related News</h3>
+         <div class="grid gap-6 md:grid-cols-2">
+            {/* Placeholder for related news items */}
+            <div class="bg-copper-50 p-6 rounded-lg border border-copper-100 text-center text-copper-500 italic">
+                More news coming soon...
+            </div>
+         </div>
+    </section>
+
   </article>
 </Layout>
