@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StatBlock from '../components/organisms/StatBlock.astro';
+---
+
+<Layout title="Cookies Policy" description="Cookies Policy for Dragon's Arcanum." article={false}>
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-serif font-extrabold text-copper-900 mb-8 text-center">Cookies Policy</h1>
+    
+    <StatBlock title="Arcane Trackers (Cookies)" type="item">
+        <div class="prose prose-sm prose-invert max-w-none text-copper-100">
+            <p><strong>Last Updated:</strong> [Current Date]</p>
+
+            <h3>1. What are cookies?</h3>
+            <p>Cookies are small text files that are placed on your computer or mobile device by websites that you visit. They are widely used in order to make websites work, or work more efficiently, as well as to provide information to the owners of the site.</p>
+
+            <h3>2. How do we use cookies?</h3>
+            <p>We use cookies to:</p>
+            <ul>
+                <li>Understand how you use our site</li>
+                <li>Remember your preferences</li>
+                <li>Improve your experience</li>
+            </ul>
+
+            <h3>3. Types of cookies we use</h3>
+            <ul>
+                <li><strong>Strictly Necessary Cookies:</strong> These tracking spells are essential for you to browse the website and use its features, such as accessing secure areas of the site.</li>
+                <li><strong>Performance Cookies:</strong> These cookies collect information about how you use our website, e.g. which pages you go to most often.</li>
+            </ul>
+
+            <h3>4. How to manage cookies</h3>
+            <p>You can set your browser not to accept cookies. However, in a few cases, some of our website features may not function as a result.</p>
+        </div>
+    </StatBlock>
+  </div>
+</Layout>
