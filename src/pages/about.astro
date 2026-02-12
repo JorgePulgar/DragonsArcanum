@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import OptimizedImage from '../components/atoms/OptimizedImage.astro';
+
+// Placeholder for headshot - in a real scenario, I'd check if one exists or use a generated one.
+// Task says: "Integrated space for a professional 'headshot' or DM-at-the-table photo."
+const headshotUrl = "/images/dm-headshot.jpg"; 
+---
+
+<Layout title="The DM Behind Dragon's Arcanum" description="Meet the Dungeon Master behind the screen. 10+ years of TTRPG experience and a passion for deep-dive reviews." article={false}>
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    
+    <header class="text-center mb-16">
+      <h1 class="text-4xl md:text-6xl font-serif font-extrabold text-copper-900 mb-6 leading-tight">
+        The DM Behind the Screen
+      </h1>
+      <p class="text-xl text-copper-700 max-w-2xl mx-auto">
+        Crafting worlds, crunching numbers, and reviewing the multiverse one book at a time.
+      </p>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-12 items-start">
+      
+      <div class="relative group">
+        <div class="absolute -inset-1 bg-gradient-to-r from-tradewind-400 to-copper-400 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+        <div class="relative rounded-2xl overflow-hidden border-2 border-white shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+           {/* Placeholder Image */}
+           <div class="bg-copper-100 aspect-[3/4] flex items-center justify-center text-copper-400">
+              <span class="text-sm italic">DM Headshot Placeholder</span>
+              {/* <OptimizedImage src={headshotUrl} alt="The DM at the table" className="w-full h-full object-cover" /> */}
+           </div>
+        </div>
+        <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg border border-copper-100 hidden md:block">
+            <p class="font-serif font-bold text-copper-900 text-lg">Current Campaign</p>
+            <p class="text-tradewind-600">Curse of Strahd (Level 7)</p>
+        </div>
+      </div>
+
+      <div class="prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-900/80">
+        
+        <h2 class="text-3xl font-bold mb-4">Greetings, Adventurer.</h2>
+        <p>
+          I’ve spent the last <strong>seven years</strong> living and breathing TTRPGs, with six of those spent almost exclusively behind the <strong>DM screen</strong>. After <strong>300+ hours of prep time</strong> and running campaigns that span from the depths of the Underdark to the cosmic horror of the Far Realm, I realized something:
+        </p>
+        <p class="italic font-medium text-copper-800 border-l-4 border-tradewind-400 pl-4">
+          Finding the right tools for your table shouldn't be a dungeon crawl in itself.
+        </p>
+
+        <h3>Why Dragon's Arcanum?</h3>
+        <p>
+          I started this project as a digital grimoire—a way to catalog the best (and avoid the worst) of the TTRPG resources exploding onto the scene. What began as a personal Notion database has evolved into <strong>Dragon's Arcanum</strong>.
+        </p>
+        <p>
+          My mission is simple: to provide <strong>deep-dive, objective, and battle-tested reviews</strong>. I don't just read the books; I run them. I test the mechanics, break the encounters, and see if the lore holds up when the players inevitably go off-rails.
+        </p>
+
+        <h3>My Review Philosophy</h3>
+        <ul class="list-none pl-0 space-y-4">
+            <li class="flex gap-3">
+                <span class="text-tradewind-600 font-bold text-xl">01.</span>
+                <span><strong>Utility First:</strong> Does this actually help run the game, or is it just pretty shelf-candy?</span>
+            </li>
+            <li class="flex gap-3">
+                <span class="text-tradewind-600 font-bold text-xl">02.</span>
+                <span><strong>Respect the Lore:</strong> Does it fit? Does it inspire? Or does it break the immersion?</span>
+            </li>
+            <li class="flex gap-3">
+                <span class="text-tradewind-600 font-bold text-xl">03.</span>
+                <span><strong>Value for Money:</strong> TTRPGs are an expensive hobby. I'll tell you if it's worth your gold pieces.</span>
+            </li>
+        </ul>
+
+      </div>
+    </div>
+
+    <div class="mt-20 text-center">
+        <h2 class="text-3xl font-serif font-bold text-copper-900 mb-8">Ready to Roll Initiative?</h2>
+        <a href="/contact" class="inline-block bg-tradewind-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-tradewind-700 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            Contact Me
+        </a>
+    </div>
+
+  </div>
+</Layout>
