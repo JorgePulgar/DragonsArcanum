@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// A D20 rolling a 1 SVG or image could be placed here.
+---
+
+<Layout title="404 - Critical Failure" description="You have rolled a Natural 1. The page you are looking for does not exist." article={false}>
+  <div class="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+    
+    <div class="mb-8 relative">
+        <div class="absolute inset-0 bg-red-100 rounded-full blur-xl opacity-50 animate-pulse"></div>
+        <div class="relative text-9xl font-serif font-bold text-red-600">1</div>
+    </div>
+
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-copper-900 mb-4">
+        Critical Failure
+    </h1>
+    
+    <p class="text-xl text-copper-700 max-w-lg mx-auto mb-8">
+        You've rolled a <strong>Natural 1</strong> on your Perception Check. The page you are looking for is lost in the dungeon (or never existed).
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4">
+        <a href="/" class="bg-tradewind-600 hover:bg-tradewind-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
+            Return to Tavern (Home)
+        </a>
+        <a href="/search" class="bg-copper-100 hover:bg-copper-200 text-copper-900 font-bold py-3 px-8 rounded-xl shadow hover:shadow-md transition-all">
+            Search the Archives
+        </a>
+    </div>
+
+  </div>
+</Layout>
