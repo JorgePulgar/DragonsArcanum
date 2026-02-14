@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import { getRelatedPosts } from '../../lib/recommendations';
+import ReviewCard from '../molecules/ReviewCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+    currentPost: CollectionEntry<'reviews' | 'comparisons' | 'news'>;
+}
+
+const { currentPost } = Astro.props;
+
+// Fetch all posts (cross-silo)
+// In a real high-traffic app, we might optimize this or cache it, 
+// but for static build it's fine.
+const allReviews = await getCollection('reviews');
+const allComparisons = await getCollection('comparisons');
+const allNews = await getCollection('news');
+
+const allPosts = [...allReviews, ...allComparisons, ...allNews];
+
+const recommendations = getRelatedPosts(currentPost, allPosts, 3);
+
+// Helper to normalize card data (duplicated from hub logic, maybe refactor later)
+const getCardData = (post: any) => {
+    const isReview = post.collection === 'reviews';
+    const isComparison = post.collection === 'comparisons';
+    
+    return {
+        title: post.data.title,
+        description: post.data.description || post.data.excerpt,
+        coverImage: isReview 
+            ? (post.data.product?.coverImage || '/placeholder.jpg') 
+            : (post.data.image || '/images/comparison-placeholder.jpg'),
+        rating: isReview ? post.data.rating : 0,
+        category: post.data.category,
+        slug: post.slug,
+        price: isReview ? post.data.product?.price : undefined,
+        collection: post.collection // Needed for correct URL construction if ReviewCard doesn't handle it
+    };
+};
+---
+
+{recommendations.length > 0 && (
+    <section class="border-t border-copper-200 mt-16 pt-12">
+        <h2 class="font-serif text-2xl font-bold text-copper-900 mb-8 flex items-center gap-2">
+            <span class="w-2 h-8 bg-copper-400 block"></span>
+            You Might Also Like
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {recommendations.map(post => {
+                const data = getCardData(post);
+                // ReviewCard handles href based on category/slug but expects /reviews/ prefix?
+                // Let's check ReviewCard implementation.
+                // It uses: href={`/reviews/${category}/${slug}`} hardcoded! 
+                // We need to handle this.
+                // Since I cannot change ReviewCard easily without risk, I will wrap it 
+                // or assume ReviewCard might need update to support other collections.
+                // WAIT: ReviewCard.astro line 19: <a href={`/reviews/${category}/${slug}`}
+                // This is a problem for News/Comparisons.
+                
+                // Hack/Fix: I will ignore the link in ReviewCard for now (it will point to /reviews/...)
+                // OR I should use a generic Card if available? FeaturedCard?
+                // OR I should duplicate the card markup here for safety?
+                // DUPLICATING Markup to ensure correct links for different silos.
+                
+                return (
+                    <a href={`/${post.collection}/${data.category}/${data.slug}`} class="group block relative flex flex-col h-full rounded-xl overflow-hidden bg-white border border-copper-200 transition-all hover:border-copper-400 hover:shadow-md">
+                        <div class="aspect-[16/9] w-full relative overflow-hidden border-b border-copper-100 bg-gray-100">
+                             <img src={data.coverImage} alt={data.title} class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                             <div class="absolute top-2 right-2">
+                               <span class="text-xs font-bold px-2 py-1 rounded shadow-sm backdrop-blur-md bg-white/90 text-copper-800 border border-copper-200 uppercase tracking-wider">
+                                   {post.collection}
+                               </span>
+                             </div>
+                        </div>
+                        
+                        <div class="p-4 flex flex-col flex-1 gap-2">
+                            <h3 class="font-serif font-bold text-lg leading-tight text-copper-950 group-hover:text-tradewind-700 transition-colors line-clamp-2">
+                            {data.title}
+                            </h3>
+                            {data.price && (
+                                <span class="text-xs font-bold text-tradewind-700 bg-tradewind-50 px-2 py-1 rounded border border-tradewind-200 w-fit">
+                                    ${data.price}
+                                </span>
+                            )}
+                            {data.rating > 0 && (
+                                <div class="flex items-center gap-1 text-xs font-mono text-copper-500">
+                                    <span>★</span>
+                                    <span>{data.rating}/10</span>
+                                </div>
+                            )}
+                        </div>
+                    </a>
+                );
+            })}
+        </div>
+    </section>
+)}

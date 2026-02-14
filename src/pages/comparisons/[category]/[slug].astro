@@ -6,6 +6,7 @@ import ComparisonTable from '../../../components/organisms/ComparisonTable.astro
 import TableOfContents from '../../../components/molecules/TableOfContents.astro';
 import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
 import { Tag } from '../../../components/atoms/Tag';
+import PostFooterRecommendations from '../../../components/organisms/PostFooterRecommendations.astro';
 
 export async function getStaticPaths() {
   const comparisons = await getCollection('comparisons');
@@ -74,8 +75,8 @@ const schema = {
             {/* Content */}
             <Content />
 
-             {/* FAQ (Placeholder) */}
-             {/* Recommended (Placeholder) */}
+             {/* Recommended Posts */}
+             <PostFooterRecommendations currentPost={entry} />
         </div>
     </div>
   </article>

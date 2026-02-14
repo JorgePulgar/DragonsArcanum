@@ -6,6 +6,7 @@ import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
 import TableOfContents from '../../../components/molecules/TableOfContents.astro';
 import { Tag } from '../../../components/atoms/Tag';
 import { StarRating } from '../../../components/atoms/StarRating';
+import PostFooterRecommendations from '../../../components/organisms/PostFooterRecommendations.astro';
 
 export async function getStaticPaths() {
   const reviews = await getCollection('reviews');
@@ -167,13 +168,7 @@ const productSchema = {
     </div>
     
     {/* Recommended Posts (Placeholder) */}
-    <section class="mt-20 pt-10 border-t border-copper-200">
-        <h2 class="text-3xl font-serif font-bold text-copper-900 mb-8 text-center">You Might Also Like</h2>
-        {/* TODO: Implement Recommended Posts Logic */}
-        <div class="p-8 bg-copper-50 rounded-xl text-center text-copper-500 italic">
-            Recommended posts logic coming soon...
-        </div>
-    </section>
+    <PostFooterRecommendations currentPost={entry} />
 
   </article>
 </Layout>

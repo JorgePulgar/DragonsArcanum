@@ -5,6 +5,7 @@ import Schema from '../../../components/utils/Schema.astro';
 import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
 import TableOfContents from '../../../components/molecules/TableOfContents.astro';
 import { Tag } from '../../../components/atoms/Tag';
+import PostFooterRecommendations from '../../../components/organisms/PostFooterRecommendations.astro';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
@@ -80,15 +81,7 @@ const schema = {
     {/* Related News (Placeholder logic) - "Related News" implies querying other news items 
         Ideally we'd pass related posts, but for now a placeholder structure matches the request.
     */}
-    <section class="mt-16 pt-8 border-t border-copper-200">
-         <h3 class="text-2xl font-serif font-bold text-copper-900 mb-6">Related News</h3>
-         <div class="grid gap-6 md:grid-cols-2">
-            {/* Placeholder for related news items */}
-            <div class="bg-copper-50 p-6 rounded-lg border border-copper-100 text-center text-copper-500 italic">
-                More news coming soon...
-            </div>
-         </div>
-    </section>
+    <PostFooterRecommendations currentPost={entry} />
 
   </article>
 </Layout>
