@@ -49,6 +49,8 @@ const comparisons = defineCollection({
         title: z.string(),
         description: z.string(),
         publishDate: z.date(),
+        // Add draft field
+        draft: z.boolean().default(false),
         category: z.enum(['adventures', 'rulebooks', 'settings', 'supplements']),
         image: z.string().optional(),
 
@@ -77,6 +79,8 @@ const news = defineCollection({
         title: z.string(),
         excerpt: z.string(),
         publishDate: z.date(),
+        // Add draft field
+        draft: z.boolean().default(false),
         category: z.enum(['releases', 'updates', 'wotc', 'community']),
         image: z.string().optional(),
         sourceUrl: z.string().url().optional(),

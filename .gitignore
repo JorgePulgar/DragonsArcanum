@@ -27,3 +27,4 @@ pnpm-debug.log*
 .agent/
 TASKS.md
 CLEANUP_PENDING.md
+AGENT_STATUS.log
