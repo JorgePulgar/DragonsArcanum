@@ -9,13 +9,13 @@ tags: ["horror", "levels-1-10", "vampires"]
 product:
   name: "Curse of Strahd"
   publisher: "Wizards of the Coast"
+  system: "D&D 5e"
   price: 49.95
   currency: "USD"
-  system: "D&D 5e"
+  coverImage: "/images/strahd-cover.jpg"
   levels:
     min: 1
     max: 10
-  coverImage: "/images/strahd-cover.jpg"
 rating: 10
 verdict: "The definitive gothic horror experience in TTRPGs. Atmospheric, challenging, and deeply memorable."
 pros: ["Incredible atmosphere", "Strong villain", "High replayability"]

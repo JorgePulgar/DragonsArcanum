@@ -10,7 +10,7 @@ items:
     ratings:
       gameplay: 7
       lore: 0
-      art: 6
+      art: 10
       value: 8
       difficulty: 3
     pros: ["Browser-based", "Huge marketplace", "Free tier"]
