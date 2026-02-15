@@ -29,6 +29,7 @@ const fillGrid = (posts: any[], min: number) => {
     return filled.map((p, i) => ({
         ...p,
         id: `${p.id}-${i}`, // Unique ID for key
+        realSlug: p.slug || p.id.split('/').pop()?.replace(/\.mdx?$/, ''), // Preserve real slug
         data: { ...p.data, title: `${p.data.title} ${i > 0 ? `(${i + 1})` : ''}` }
     })).slice(0, 3); // Limit to 3 for single-line visualization
 };
@@ -76,8 +77,7 @@ const newsItems = fillGrid(sortedNews, 3);
     </div>
 
     <BentoGrid>
-        {comparisons.map(post => {
-            const slug = post.id.split('-')[0].split('/').pop()?.replace(/\.mdx?$/, ''); // Remove duplication suffix for link
+        {comparisons.map((post: any) => {
             return (
             <BentoItem>
                 <ReviewCard 
@@ -85,8 +85,8 @@ const newsItems = fillGrid(sortedNews, 3);
                     coverImage={post.data.image || '/images/comparison-placeholder.jpg'}
                     rating={0} // Comparisons use specific ratings
                     category={post.data.category}
-                    slug={slug}
-                    url={`/comparisons/${post.data.category}/${slug}`}
+                    slug={post.realSlug}
+                    url={`/comparisons/${post.data.category}/${post.realSlug}`}
                 />
             </BentoItem>
         )})}
@@ -114,8 +114,7 @@ const newsItems = fillGrid(sortedNews, 3);
     </div>
 
     <BentoGrid>
-         {critiques.map(post => {
-             const slug = post.id.split('-')[0].split('/').pop()?.replace(/\.mdx?$/, '');
+         {critiques.map((post: any) => {
              return (
              <BentoItem>
                  <ReviewCard 
@@ -123,8 +122,8 @@ const newsItems = fillGrid(sortedNews, 3);
                     coverImage={post.data.product.coverImage}
                     rating={post.data.rating}
                     category={post.data.category}
-                    slug={slug}
-                    url={`/reviews/${post.data.category}/${slug}`}
+                    slug={post.realSlug}
+                    url={`/reviews/${post.data.category}/${post.realSlug}`}
                  />
              </BentoItem>
         )})}
@@ -152,12 +151,13 @@ const newsItems = fillGrid(sortedNews, 3);
       </div>
 
        <BentoGrid>
-          {newsItems.map((news) => (
+          {newsItems.map((news: any) => (
                <BentoItem>
                    <BasicCard
                       title={news.data.title}
                       type={news.data.category}
                       date={new Date(news.data.publishDate).toISOString().split('T')[0]}
+                      url={`/news/${news.data.category}/${news.realSlug}`}
                    />
                </BentoItem>
           ))}

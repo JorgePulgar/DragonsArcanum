@@ -4,13 +4,22 @@ interface Props {
   type: string;
   date: string;
   class?: string;
+  url?: string;
 }
 
-const { title, type, date, class: className } = Astro.props;
+const { title, type, date, class: className, url } = Astro.props;
 ---
 
-<div class:list={["bg-white border border-copper-200 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center", className]}>
-  <span class="text-xs font-bold tracking-wider text-tradewind-600 uppercase mb-2 block">{type}</span>
-  <h4 class="font-serif text-copper-950 font-bold text-xl">{title}</h4>
-  <p class="text-sm text-copper-500 mt-2">{date}</p>
-</div>
+{url ? (
+    <a href={url} class:list={["bg-white border border-copper-200 p-6 rounded-sm shadow-sm hover:shadow-md transition-all hover:border-copper-400 flex flex-col justify-center block h-full", className]}>
+      <span class="text-xs font-bold tracking-wider text-tradewind-600 uppercase mb-2 block">{type}</span>
+      <h4 class="font-serif text-copper-950 font-bold text-xl">{title}</h4>
+      <p class="text-sm text-copper-500 mt-2">{date}</p>
+    </a>
+) : (
+    <div class:list={["bg-white border border-copper-200 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center h-full", className]}>
+      <span class="text-xs font-bold tracking-wider text-tradewind-600 uppercase mb-2 block">{type}</span>
+      <h4 class="font-serif text-copper-950 font-bold text-xl">{title}</h4>
+      <p class="text-sm text-copper-500 mt-2">{date}</p>
+    </div>
+)}

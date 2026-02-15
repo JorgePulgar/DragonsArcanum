@@ -22,10 +22,13 @@ const allPosts = [...allReviews, ...allComparisons, ...allNews];
 const recommendations = getRelatedPosts(currentPost, allPosts, 3);
 
 // Helper to normalize card data (duplicated from hub logic, maybe refactor later)
+    // Helper to normalize card data (duplicated from hub logic, maybe refactor later)
 const getCardData = (post: any) => {
     const isReview = post.collection === 'reviews';
-    const isComparison = post.collection === 'comparisons';
     
+    // Robust slug extraction: use post.slug if available, otherwise parse ID
+    const slug = post.slug || post.id.split('/').pop()?.replace(/\.mdx?$/, '') || '';
+
     return {
         title: post.data.title,
         description: post.data.description || post.data.excerpt,
@@ -34,9 +37,9 @@ const getCardData = (post: any) => {
             : (post.data.image || '/images/comparison-placeholder.jpg'),
         rating: isReview ? post.data.rating : 0,
         category: post.data.category,
-        slug: post.slug,
+        slug: slug,
         price: isReview ? post.data.product?.price : undefined,
-        collection: post.collection // Needed for correct URL construction if ReviewCard doesn't handle it
+        collection: post.collection // Needed for correct URL construction
     };
 };
 ---
