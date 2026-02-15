@@ -11,12 +11,19 @@ import { Button } from '../components/atoms/Button';
 
 // --- Data Fetching ---
 const allReviews = await getCollection('reviews');
+const allComparisons = await getCollection('comparisons');
+const allNews = await getCollection('news');
+
 const sortedReviews = allReviews.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+const sortedComparisons = allComparisons.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+const sortedNews = allNews.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
 // Helper to fill grid with mock data if not enough real posts
-const fillGrid = (posts: typeof sortedReviews, min: number) => {
+// @ts-ignore
+const fillGrid = (posts: any[], min: number) => {
     let filled = [...posts];
-    while (filled.length < min && filled.length > 0) {
+    if (filled.length === 0) return [];
+    while (filled.length < min) {
         filled = [...filled, ...posts];
     }
     return filled.map((p, i) => ({
@@ -27,19 +34,13 @@ const fillGrid = (posts: typeof sortedReviews, min: number) => {
 };
 
 // 1. Comparisons Cluster
-const comparisons = fillGrid(sortedReviews, 3); 
+const comparisons = fillGrid(sortedComparisons, 3); 
 
 // 2. Critiques Cluster
 const critiques = fillGrid(sortedReviews, 3);
 
-// 3. News/Release Tracker (Mock Data)
-const rawNews = [
-    { title: "D&D 2026 Roadmap Revealed", type: "News", date: "2026-01-15" },
-    { title: "New DMG Errata", type: "Update", date: "2026-01-10" },
-    { title: "WotC Announces VTT Pricing", type: "Release", date: "2026-01-05" },
-];
-
-const newsItems = [...rawNews].slice(0, 3);
+// 3. News/Release Tracker
+const newsItems = fillGrid(sortedNews, 3);
 ---
 
 <Layout title="Dragon's Arcanum" description="The detailed archive for D&D book comparisons and reviews.">
@@ -75,17 +76,20 @@ const newsItems = [...rawNews].slice(0, 3);
     </div>
 
     <BentoGrid>
-        {comparisons.map(post => (
+        {comparisons.map(post => {
+            const slug = post.id.split('-')[0].split('/').pop()?.replace(/\.mdx?$/, ''); // Remove duplication suffix for link
+            return (
             <BentoItem>
                 <ReviewCard 
                     title={post.data.title}
-                    coverImage={post.data.product.coverImage}
-                    rating={post.data.rating}
+                    coverImage={post.data.image || '/images/comparison-placeholder.jpg'}
+                    rating={0} // Comparisons use specific ratings
                     category={post.data.category}
-                    slug={post.id.split('/').pop()?.replace(/\.mdx?$/, '') || ''}
+                    slug={slug}
+                    url={`/comparisons/${post.data.category}/${slug}`}
                 />
             </BentoItem>
-        ))}
+        )})}
     </BentoGrid>
     
     <div class="mt-8 text-center">
@@ -110,17 +114,20 @@ const newsItems = [...rawNews].slice(0, 3);
     </div>
 
     <BentoGrid>
-         {critiques.map(post => (
+         {critiques.map(post => {
+             const slug = post.id.split('-')[0].split('/').pop()?.replace(/\.mdx?$/, '');
+             return (
              <BentoItem>
                  <ReviewCard 
                     title={post.data.title}
                     coverImage={post.data.product.coverImage}
                     rating={post.data.rating}
                     category={post.data.category}
-                    slug={post.id.split('/').pop()?.replace(/\.mdx?$/, '') || ''}
+                    slug={slug}
+                    url={`/reviews/${post.data.category}/${slug}`}
                  />
              </BentoItem>
-        ))}
+        )})}
     </BentoGrid>
 
     <div class="mt-8 text-center">
@@ -148,9 +155,9 @@ const newsItems = [...rawNews].slice(0, 3);
           {newsItems.map((news) => (
                <BentoItem>
                    <BasicCard
-                      title={news.title}
-                      type={news.type}
-                      date={news.date}
+                      title={news.data.title}
+                      type={news.data.category}
+                      date={new Date(news.data.publishDate).toISOString().split('T')[0]}
                    />
                </BentoItem>
           ))}
