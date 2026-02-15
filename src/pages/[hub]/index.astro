@@ -81,6 +81,10 @@ const categoryFilters = uniqueCategories.map((c: string) => ({ label: c.charAt(0
 
 // Helper to normalize card data
 const getCardData = (post: any) => {
+    // Calculate slug from ID (glob loader doesn't provide it automatically)
+    const slug = post.id.split('/').pop()?.replace(/\.(md|mdx)$/, '') || post.id;
+    const url = `/${collectionName}/${post.data.category}/${slug}`;
+
     if (collectionName === 'reviews') {
         return {
             title: post.data.title,
@@ -88,7 +92,8 @@ const getCardData = (post: any) => {
             coverImage: post.data.product?.coverImage || '/placeholder.jpg',
             rating: post.data.rating,
             category: post.data.category,
-            slug: post.slug,
+            slug,
+            url,
             price: post.data.product?.price
         };
     } else if (collectionName === 'comparisons') {
@@ -98,7 +103,8 @@ const getCardData = (post: any) => {
             coverImage: '/images/comparison-placeholder.jpg', // Placeholder for now
             rating: 0, // Comparisons don't have ratings
             category: post.data.category,
-            slug: post.slug,
+            slug,
+            url,
         };
     } else { // news
         return {
@@ -107,7 +113,8 @@ const getCardData = (post: any) => {
             coverImage: post.data.image || '/placeholder.jpg',
             rating: 0,
             category: post.data.category,
-            slug: post.slug,
+            slug,
+            url,
         };
     }
 };
@@ -141,6 +148,7 @@ const getCardData = (post: any) => {
                         rating={data.rating}
                         category={data.category}
                         slug={data.slug}
+                        url={data.url}
                         className="h-full"
                      />
                  </div>
@@ -157,6 +165,7 @@ const getCardData = (post: any) => {
                         rating={data.rating}
                         category={data.category}
                         slug={data.slug}
+                        url={data.url}
                         price={data.price}
                         className="h-full"
                      />
@@ -196,6 +205,7 @@ const getCardData = (post: any) => {
                     rating={data.rating}
                     category={data.category}
                     slug={data.slug}
+                    url={data.url}
                     price={data.price}
                 />
                 );

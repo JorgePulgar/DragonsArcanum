@@ -8,15 +8,19 @@ interface Props {
   coverImage: string;
   rating: number;
   category: string;
-  slug: string;
+  slug?: string;
+  url?: string;
   price?: number;
   className?: string;
 }
 
-const { title, coverImage, rating, category, slug, price, className } = Astro.props;
+const { title, coverImage, rating, category, slug, url, price, className } = Astro.props;
+
+// Fallback for backward compatibility or strict enforcement
+const finalUrl = url || `/reviews/${category}/${slug}`;
 ---
 
-<a href={`/reviews/${category}/${slug}`} class:list={["group block relative flex flex-col h-full rounded-xl overflow-hidden bg-white border border-copper-200 transition-all hover:border-copper-400 hover:shadow-[4px_4px_0px_0px_rgba(56,28,16,0.1)]", className]}>
+<a href={finalUrl} class:list={["group block relative flex flex-col h-full rounded-xl overflow-hidden bg-white border border-copper-200 transition-all hover:border-copper-400 hover:shadow-[4px_4px_0px_0px_rgba(56,28,16,0.1)]", className]}>
   <div class="aspect-[4/3] w-full relative overflow-hidden border-b border-copper-100">
      {/* Note: In real app, we need to resolve string path to ImageMetadata or allow public dir strings */}
      <OptimizedImage src={coverImage} alt={title} className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105" />

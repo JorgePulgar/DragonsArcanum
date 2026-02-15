@@ -10,11 +10,14 @@ interface Props {
   coverImage: string;
   rating: number;
   category: string;
-  slug: string;
+  slug?: string;
+  url?: string;
   className?: string;
 }
 
-const { title, description, coverImage, rating, category, slug, className } = Astro.props;
+const { title, description, coverImage, rating, category, slug, url, className } = Astro.props;
+
+const finalUrl = url || `/reviews/${category}/${slug}`;
 ---
 
 <div class:list={["group relative w-full h-full min-h-[400px] rounded-xl overflow-hidden isolate border-2 border-copper-950 shadow-[4px_4px_0px_0px_rgba(56,28,16,0.3)]", className]}>
@@ -39,9 +42,9 @@ const { title, description, coverImage, rating, category, slug, className } = As
     </p>
 
     <Button variant="primary" className="w-fit">
-      Read Review
+      Read Post
     </Button>
     
-    <a href={`/reviews/${category}/${slug}`} class="absolute inset-0 z-20" aria-label={`Read review of ${title}`}></a>
+    <a href={finalUrl} class="absolute inset-0 z-20" aria-label={`Read review of ${title}`}></a>
   </div>
 </div>
