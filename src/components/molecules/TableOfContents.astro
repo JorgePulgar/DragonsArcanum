@@ -13,7 +13,7 @@ const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3);
 
 {
   toc.length > 0 && (
-    <details class="toc-container my-8 bg-copper-100 rounded-lg border border-copper-200 group" open>
+    <details class="toc-container my-8 bg-copper-100 rounded-lg border border-copper-200 group">
       <summary class="list-none cursor-pointer p-4 flex justify-between items-center md:cursor-default">
         <h2 class="text-xl font-serif font-bold text-copper-900 m-0">Table of Contents</h2>
         <span class="md:hidden text-copper-500 group-open:rotate-180 transition-transform">▼</span>
@@ -34,13 +34,11 @@ const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3);
       </nav>
     </details>
 
-    <script>
+    <script lang="ts">
       // Force open on desktop, collapse by default on mobile
       const tocDetails = document.querySelector('.toc-container') as HTMLDetailsElement;
       if (tocDetails) {
-        if (window.innerWidth < 768) {
-          tocDetails.removeAttribute('open');
-        } else {
+        if (window.innerWidth >= 768) {
           tocDetails.setAttribute('open', '');
           // Prevent closing on desktop
           tocDetails.querySelector('summary')?.addEventListener('click', (e) => {
