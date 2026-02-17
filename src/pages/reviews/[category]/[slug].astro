@@ -111,7 +111,7 @@ const productSchema = {
         {/* Verdict Box (Before content on both) */}
         {/* Verdict Box (Collapsible on Mobile) */}
         <details class="verdict-container group not-prose my-12 bg-white rounded-xl shadow-sm border border-copper-100 overflow-hidden">
-             <summary class="list-none cursor-pointer p-6 bg-copper-50 border-b border-copper-100 flex justify-between items-center md:cursor-default transition-colors hover:bg-copper-100 md:hover:bg-copper-50">
+             <summary class="list-none cursor-pointer p-6 bg-copper-50 border-b border-copper-100 flex justify-between items-center md:cursor-default md:pointer-events-none transition-colors hover:bg-copper-100 md:hover:bg-copper-50">
                 <h2 class="text-3xl font-serif font-bold text-copper-900 m-0">The Verdict</h2>
                 <span class="md:hidden text-copper-500 group-open:rotate-180 transition-transform text-2xl">▼</span>
              </summary>
@@ -148,28 +148,18 @@ const productSchema = {
              </div>
         </details>
 
-        <script lang="ts">
-          // Handle Verdict responsive behavior
-          const verdictDetails = document.querySelector('.verdict-container') as HTMLDetailsElement;
-          if (verdictDetails) {
-             const setVerdictState = () => {
-                if (window.innerWidth >= 768) {
-                    verdictDetails.setAttribute('open', '');
-                } 
-                // Don't modify on mobile resize to allow manual toggle, 
-                // but on initial load it will be closed due to lack of 'open' attr
-             };
-             
-             // Initial check
-             setVerdictState();
-
-             // Prevent closing on desktop
-             verdictDetails.querySelector('summary')?.addEventListener('click', (e) => {
-                 if (window.innerWidth >= 768) {
-                   e.preventDefault();
-                 }
-             });
+        <script>
+          const verdictDetails = document.querySelector('.verdict-container');
+          function handleVerdictResize() {
+            if (!verdictDetails) return;
+            if (window.innerWidth >= 768) {
+                verdictDetails.setAttribute('open', '');
+            }
           }
+          // Run immediately
+          handleVerdictResize();
+          // Run on resize
+          window.addEventListener('resize', handleVerdictResize);
         </script>
 
         {/* Mobile-Only Product Details Position */}
