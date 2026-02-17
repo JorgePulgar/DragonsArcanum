@@ -1,0 +1,63 @@
+---
+interface Props {
+  product: {
+    name: string;
+    publisher: string;
+    system: string;
+    price: number;
+    currency: string;
+    levels?: {
+      min: number;
+      max: number;
+    };
+    affiliateLink?: string;
+  };
+  class?: string;
+}
+
+const { product, class: className } = Astro.props;
+---
+
+<div class:list={["bg-white p-6 rounded-2xl border border-copper-200 shadow-sm", className]}>
+  <h3 class="font-serif font-bold text-xl mb-6 text-copper-900 border-b border-copper-100 pb-2">Product Details</h3>
+  <ul class="space-y-4 text-sm text-copper-700">
+    <li class="flex justify-between">
+      <span class="text-copper-500">Publisher</span>
+      <span class="font-medium text-right">{product.publisher}</span>
+    </li>
+    <li class="flex justify-between">
+      <span class="text-copper-500">System</span>
+      <span class="font-medium text-right">{product.system}</span>
+    </li>
+     <li class="flex justify-between">
+      <span class="text-copper-500">Price</span>
+      <span class="font-medium text-right text-green-700 font-bold">{product.currency === 'USD' ? '$' : product.currency}{product.price}</span>
+    </li>
+    {product.levels && (
+         <li class="flex justify-between">
+          <span class="text-copper-500">Levels</span>
+          <span class="font-medium text-right">{product.levels.min}-{product.levels.max}</span>
+        </li>
+    )}
+  </ul>
+  
+  {/* Desktop CTA Button (Hidden if handled externally, or we can keep it here) 
+      The requirement says: "make a CTA bar bellow the box for the pc view".
+      If we include it here, it will appear wherever this component is used.
+      Mobile needs a sticky bar, so we might want to conditionally hide this on mobile 
+      or just use this component for the box content and handle CTA separately?
+      
+      User said: "CTA bar bellow the box for the pc view ... In the phone view you need to also add the bar in the bottom"
+      
+      Let's include the button here, but we might hide it on certain breakpoints if the sticky bar covers it?
+      Actually, the sticky bar is for phone. This button is for PC.
+      If we use this component on phone (in the content flow), the button will appear there too.
+      That might be redundant with the sticky bar.
+      Let's render it here, and maybe hide it on mobile via CSS class if needed.
+  */}
+  {product.affiliateLink && (
+    <a href={product.affiliateLink} target="_blank" rel="noopener noreferrer" class="hidden md:block mt-8 w-full bg-tradewind-600 hover:bg-tradewind-500 text-white text-center font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+      Check the book in Amazon
+    </a>
+  )}
+</div>

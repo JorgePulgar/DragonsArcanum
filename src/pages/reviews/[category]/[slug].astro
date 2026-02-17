@@ -6,6 +6,7 @@ import OptimizedImage from '../../../components/atoms/OptimizedImage.astro';
 import TableOfContents from '../../../components/molecules/TableOfContents.astro';
 import { Tag } from '../../../components/atoms/Tag';
 import { StarRating } from '../../../components/atoms/StarRating';
+import ProductDetails from '../../../components/molecules/ProductDetails.astro';
 import PostFooterRecommendations from '../../../components/organisms/PostFooterRecommendations.astro';
 
 export async function getStaticPaths() {
@@ -87,14 +88,30 @@ const productSchema = {
           The sidebar with product details is useful. Let's keep it on the side (desktop) or bottom (mobile).
       */}
       
-      <div class="lg:col-span-8 prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-800 prose-a:text-tradewind-700 hover:prose-a:text-tradewind-900 max-w-none">
+      {/* Sidebar - Desktop Position (Hidden on mobile via order/grid) 
+          But we need a completely different DOM order for mobile:
+          Mobile: H1 -> Desc -> Image -> ToC -> Verdict -> Product Box -> Content -> CTA
+          Desktop: Header -> Grid (Main: ToC -> Verdict -> Content, Side: Product -> CTA)
+          
+          To achieve this without duplicating heavy content (renders), we can use CSS grid areas or flex order if structure allows.
+          However, the user wants "Product Box -> Content" on mobile, but "Sidebar" on Desktop.
+          The current structure is:
+          Header
+          Grid (Main Col, Sidebar Col)
+          
+          If we put ProductDetails inside Main Col for mobile, we duplicate it.
+          Let's use `display: contents` or just render it twice (it's lightweight) to ensure perfect order? 
+          Actually, `ProductDetails` is light content. Rendering twice (one md:hidden, one hidden md:block) is safest for DOM order control.
+      */}
+      
+      <div class="lg:col-span-8 max-w-none">
         {/* Table of Contents */}
         <TableOfContents headings={headings} />
         
-        {/* Verdict / Pros & Cons - Part of the "Review" content flow */}
+        {/* Verdict Box (Before content on both) */}
         <div class="not-prose my-12 bg-white rounded-xl shadow-sm border border-copper-100 overflow-hidden">
              <div class="p-6 bg-copper-50 border-b border-copper-100">
-                <h2 class="text-2xl font-serif font-bold text-copper-900 mb-2">The Verdict</h2>
+                <h2 class="text-3xl font-serif font-bold text-copper-900 mb-2">The Verdict</h2>
                 <p class="text-lg text-copper-800 italic">{verdict}</p>
              </div>
              <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-copper-100">
@@ -125,50 +142,69 @@ const productSchema = {
              </div>
         </div>
 
-        {/* Main Content */}
-        <Content />
+        {/* Mobile-Only Product Details Position */}
+        <div class="lg:hidden mb-12">
+             <ProductDetails product={product} />
+        </div>
+
+        {/* Main Content with Typography Fixes 
+            - prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 (Bigger H2, more space)
+            - prose-img:mx-auto (Center images)
+        */}
+        <div class="prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-800 prose-a:text-tradewind-700 hover:prose-a:text-tradewind-900 prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-img:mx-auto prose-img:rounded-xl prose-img:shadow-md">
+            <Content />
+        </div>
         
         {/* FAQ Section (Placeholder for now, or if it exists in content) */}
         {/* If frontmatter has FAQ, render here. For now, assuming it's part of Content or needs to be added later */}
         
       </div>
 
-      {/* Sidebar */}
-      <aside class="lg:col-span-4 space-y-8">
-        <div class="bg-white p-6 rounded-2xl border border-copper-200 shadow-sm sticky top-24">
-          <h3 class="font-serif font-bold text-xl mb-6 text-copper-900 border-b border-copper-100 pb-2">Product Details</h3>
-          <ul class="space-y-4 text-sm text-copper-700">
-            <li class="flex justify-between">
-              <span class="text-copper-500">Publisher</span>
-              <span class="font-medium text-right">{product.publisher}</span>
-            </li>
-            <li class="flex justify-between">
-              <span class="text-copper-500">System</span>
-              <span class="font-medium text-right">{product.system}</span>
-            </li>
-             <li class="flex justify-between">
-              <span class="text-copper-500">Price</span>
-              <span class="font-medium text-right text-green-700 font-bold">{product.currency === 'USD' ? '$' : product.currency}{product.price}</span>
-            </li>
-            {product.levels && (
-                 <li class="flex justify-between">
-                  <span class="text-copper-500">Levels</span>
-                  <span class="font-medium text-right">{product.levels.min}-{product.levels.max}</span>
-                </li>
-            )}
-          </ul>
-          
-          {product.affiliateLink && (
-            <a href={product.affiliateLink} target="_blank" rel="noopener noreferrer" class="mt-8 block w-full bg-tradewind-600 hover:bg-tradewind-700 text-white text-center font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-              Buy Now
-            </a>
-          )}
+      {/* Sidebar - Desktop Only */}
+      <aside class="hidden lg:block lg:col-span-4 space-y-8">
+        <div class="sticky top-24">
+             <ProductDetails product={product} />
         </div>
       </aside>
     </div>
     
-    {/* Recommended Posts (Placeholder) */}
-    <PostFooterRecommendations currentPost={entry} />
+    {/* Mobile Sticky CTA (Floating Pill) */}
+    {product.affiliateLink && (
+        <div class="fixed bottom-6 left-4 right-4 z-50 lg:hidden">
+            <a href={product.affiliateLink} target="_blank" rel="noopener noreferrer" class="block w-full bg-tradewind-600 hover:bg-tradewind-500 text-white text-center font-bold py-4 rounded-xl shadow-2xl transform transition-transform active:scale-95 border border-tradewind-400">
+              Check the book in Amazon
+            </a>
+        </div>
+    )}
+    
+    <style is:global>
+        /* Force typography styles to override defaults */
+        .prose h2 {
+            font-size: 1.875rem !important; /* 3xl approx */
+            margin-top: 3rem !important;
+            margin-bottom: 1.5rem !important;
+            line-height: 1.2 !important;
+            color: var(--color-copper-900) !important;
+        }
+
+        .prose h3 {
+            font-size: 1.5rem !important; /* 2xl approx */
+            margin-top: 2.5rem !important;
+            margin-bottom: 1rem !important;
+            line-height: 1.3 !important;
+            color: var(--color-copper-900) !important;
+        }
+
+        .prose img {
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            margin-top: 3rem !important; /* Match H2 top margin */
+            margin-bottom: 2rem !important;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
 
   </article>
 </Layout>

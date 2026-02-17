@@ -12,6 +12,7 @@ product:
   system: "D&D 5e"
   price: 49.95
   currency: "USD"
+  affiliateLink: "https://www.amazon.com/Curse-Strahd-Dungeons-Sourcebook-Supplement/dp/0786965983"
   coverImage: "/images/strahd-cover.jpg"
   levels:
     min: 1

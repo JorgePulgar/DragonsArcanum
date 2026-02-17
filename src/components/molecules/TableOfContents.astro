@@ -13,20 +13,43 @@ const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3);
 
 {
   toc.length > 0 && (
-    <nav class="toc my-8 p-4 bg-copper-100 rounded-lg border border-copper-200">
-      <h2 class="text-xl font-serif font-bold text-copper-900 mb-4">Table of Contents</h2>
-      <ul class="space-y-2">
-        {toc.map((heading) => (
-          <li class={`toc-item toc-h${heading.depth} ${heading.depth === 3 ? 'ml-4' : ''}`}>
-            <a
-              href={`#${heading.slug}`}
-              class="text-copper-700 hover:text-tradewind-600 transition-colors duration-200 block py-1"
-            >
-              {heading.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <details class="toc-container my-8 bg-copper-100 rounded-lg border border-copper-200 group" open>
+      <summary class="list-none cursor-pointer p-4 flex justify-between items-center md:cursor-default">
+        <h2 class="text-xl font-serif font-bold text-copper-900 m-0">Table of Contents</h2>
+        <span class="md:hidden text-copper-500 group-open:rotate-180 transition-transform">▼</span>
+      </summary>
+      <nav class="toc px-4 pb-4">
+        <ul class="space-y-2">
+          {toc.map((heading) => (
+            <li class={`toc-item toc-h${heading.depth} ${heading.depth === 3 ? 'ml-4' : ''}`}>
+              <a
+                href={`#${heading.slug}`}
+                class="text-copper-700 hover:text-tradewind-600 transition-colors duration-200 block py-1"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+
+    <script>
+      // Force open on desktop, collapse by default on mobile
+      const tocDetails = document.querySelector('.toc-container') as HTMLDetailsElement;
+      if (tocDetails) {
+        if (window.innerWidth < 768) {
+          tocDetails.removeAttribute('open');
+        } else {
+          tocDetails.setAttribute('open', '');
+          // Prevent closing on desktop
+          tocDetails.querySelector('summary')?.addEventListener('click', (e) => {
+             if (window.innerWidth >= 768) {
+               e.preventDefault();
+             }
+          });
+        }
+      }
+    </script>
   )
 }
