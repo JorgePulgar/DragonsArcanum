@@ -80,4 +80,32 @@ const schema = {
         </div>
     </div>
   </article>
+    <style is:global>
+        /* Force typography styles to override defaults */
+        .prose h2 {
+            font-size: 1.875rem !important; /* 3xl approx */
+            margin-top: 3rem !important;
+            margin-bottom: 1.5rem !important;
+            line-height: 1.2 !important;
+            color: var(--color-copper-900) !important;
+        }
+
+        .prose h3 {
+            font-size: 1.5rem !important; /* 2xl approx */
+            margin-top: 2.5rem !important;
+            margin-bottom: 1rem !important;
+            line-height: 1.3 !important;
+            color: var(--color-copper-900) !important;
+        }
+
+        .prose img {
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            margin-top: 3rem !important; /* Match H2 top margin */
+            margin-bottom: 2rem !important;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
 </Layout>
