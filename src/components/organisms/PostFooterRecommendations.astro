@@ -6,9 +6,10 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
     currentPost: CollectionEntry<'reviews' | 'comparisons' | 'news'>;
+    class?: string;
 }
 
-const { currentPost } = Astro.props;
+const { currentPost, class: className } = Astro.props;
 
 // Fetch all posts (cross-silo)
 // In a real high-traffic app, we might optimize this or cache it, 
@@ -45,7 +46,7 @@ const getCardData = (post: any) => {
 ---
 
 {recommendations.length > 0 && (
-    <section class="border-t border-copper-200 mt-16 pt-12">
+    <section class={`border-t border-copper-200 mt-16 pt-12 ${className}`}>
         <h2 class="font-serif text-2xl font-bold text-copper-900 mb-8 flex items-center gap-2">
             <span class="w-2 h-8 bg-copper-400 block"></span>
             You Might Also Like
