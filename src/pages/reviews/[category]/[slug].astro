@@ -174,18 +174,20 @@ const productSchema = {
         <div class="prose prose-lg prose-headings:font-serif prose-headings:text-copper-900 prose-p:text-copper-800 prose-a:text-tradewind-700 hover:prose-a:text-tradewind-900 prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-img:mx-auto prose-img:rounded-xl prose-img:shadow-md">
             <Content />
         </div>
-        
-        {/* FAQ Section (Placeholder for now, or if it exists in content) */}
-        {/* If frontmatter has FAQ, render here. For now, assuming it's part of Content or needs to be added later */}
-        
-      </div>
 
-      {/* Sidebar - Desktop Only */}
-      <aside class="hidden lg:block lg:col-span-4 space-y-8">
-        <div class="sticky top-24">
-             <ProductDetails product={product} />
-        </div>
-      </aside>
+      </div>
+ 
+       {/* Sidebar - Desktop Only */}
+       <aside class="hidden lg:block lg:col-span-4 space-y-8">
+         <div class="sticky top-24">
+              <ProductDetails product={product} />
+         </div>
+       </aside>
+ 
+       {/* Recommended Posts - Full Width Row in Grid */}
+       <div class="lg:col-span-12 mt-12">
+         <PostFooterRecommendations currentPost={entry} />
+       </div>
     </div>
     
     {/* Mobile Sticky CTA (Floating Pill) */}
