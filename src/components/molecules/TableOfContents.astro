@@ -47,5 +47,14 @@ const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3);
       // Run on resize
       window.addEventListener('resize', handleTocResize);
     </script>
+
   )
 }
+
+<style>
+  /* Override global prose styles that might force margins on this h2 */
+  .toc-container h2 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+</style>
